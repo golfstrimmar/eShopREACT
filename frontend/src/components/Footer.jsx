@@ -1,7 +1,7 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Typography } from "@mui/material";
 
 const Footer = () => (
-  <Box sx={{ bgcolor: 'text.secondary', color: 'white', p: 2 }}>
+  <Box sx={{ bgcolor: "text.secondary", color: "white", p: 2 }}>
     <Typography variant="body2" align="center">
       © 2024 Магазин
     </Typography>
@@ -9,4 +9,3 @@ const Footer = () => (
 );
 
 export default Footer;
-
