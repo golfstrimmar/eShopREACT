@@ -81,12 +81,12 @@ const Cart = () => {
                 </Button> */}
                 <Typography variant="p">Quantity:</Typography>
                 <Typography variant="p" className="cardPrice">
-                  <span onClick={() => handleIncreaseQuantity(item._id)}>
-                    +
-                  </span>
-                  {item.quantity}
                   <span onClick={() => handleDecreaseQuantity(item._id)}>
                     -
+                  </span>
+                  {item.quantity}
+                  <span onClick={() => handleIncreaseQuantity(item._id)}>
+                    +
                   </span>
                 </Typography>
 

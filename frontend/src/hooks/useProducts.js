@@ -1,26 +1,32 @@
-import { useEffect } from 'react';
-import axios from 'axios';
-import { useDispatch } from 'react-redux';
-import { setProducts } from '../redux/actions/productsActions';
+import { useEffect } from "react";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setProducts } from "../redux/actions/productsActions";
 
 const useProducts = () => {
   const dispatch = useDispatch();
-  
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/products`);
-        console.log(response.data);
-        dispatch(setProducts(response.data)); // Сохраняем товары в Redux
+        await axios
+          .get(`${process.env.REACT_APP_API_URL}/products`)
+          .then((response) => {
+            const productsWithCategoryNames = response.data.map((product) => ({
+              ...product,
+              categoryName: product.category
+                ? product.category.name
+                : "No Category",
+            }));
+            dispatch(setProducts(productsWithCategoryNames));
+          });
       } catch (error) {
-        console.error('Ошибка при получении товаров:', error);
+        console.error("Ошибка при получении товаров:", error);
       }
     };
-    
+
     fetchProducts();
   }, [dispatch]);
 };
 
 export default useProducts;
-
-

@@ -1,5 +1,10 @@
 @import "../../scss//common/colors.scss";
-
+.Allproducts {
+  margin: 30px 0 0 0;
+  display: grid;
+  grid-template-columns: 250px repeat(auto-fill, 658px);
+  gap: 30px;
+}
 .cardContent {
   display: flex;
   flex-direction: column;
@@ -32,4 +37,9 @@
   @media (max-width: 767px) {
     grid-template-columns: 1fr;
   }
+}
+.filterContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }

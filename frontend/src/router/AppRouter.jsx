@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Home from "../pages/Home";
 import ProductDetails from "../pages/ProductDetails";
 import Cart from "../pages/Cart/Cart";
-import AdminPage from "../pages/AdminPage";
+import AdminPage from "../pages/AdminPage/AdminPage";
 const AppRouter = () => (
   <Routes>
     <Route path="/" element={<Home />} />

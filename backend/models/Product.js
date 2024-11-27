@@ -1,25 +1,31 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 // Описание схемы для товара
 const productSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true
+    required: true,
   },
   price: {
     type: Number,
-    required: true
+    required: true,
+  },
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Category",
+    required: true,
   },
   description: {
     type: String,
-    required: true
+    required: true,
   },
+  rating: { type: Number, default: 0 },
   image: {
     type: String,
-    required: true
-  }
+    required: true,
+  },
 });
 
-const Product = mongoose.model('Product', productSchema);
+const Product = mongoose.model("Product", productSchema);
 
 export default Product;

@@ -1,4 +1,4 @@
-import { combineReducers, createStore, applyMiddleware } from "redux";
+import { combineReducers, createStore, applyMiddleware, compose } from "redux";
 import productsReducer from "./reducers/productsReducer";
 import cartReducer from "./reducers/cartReducer"; // Редьюсер корзины
 
@@ -32,11 +32,13 @@ const preloadedState = {
   cart: loadCartFromLocalStorage(),
 };
 
-// Создаем store с middleware
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
   rootReducer,
   preloadedState,
-  applyMiddleware(localStorageMiddleware) // Подключаем middleware
+  // applyMiddleware(localStorageMiddleware),
+  // window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  composeEnhancers(applyMiddleware(localStorageMiddleware))
 );
 
 export default store;

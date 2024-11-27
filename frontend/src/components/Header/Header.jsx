@@ -1,7 +1,9 @@
-import { AppBar, Toolbar, Typography, Button } from "@mui/material";
+import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useEffect, useState } from "react";
+import "./Header.scss";
 const Header = () => {
   const [numberProducts, setNumberProducts] = useState(0);
   let temp = useSelector((state) => state.cart);
@@ -20,15 +22,17 @@ const Header = () => {
         </Typography>
         {/* Навигация с использованием Link для перехода по страницам */}
         <Button color="inherit" component={Link} to="/">
-          Главная
-        </Button>
-        <Button color="inherit" component={Link} to="/cart">
-          Корзина
-          <span className="cart-badge">{numberProducts}</span>
+          Home
         </Button>
         <Button color="inherit" component={Link} to="/login">
-          Войти
+          Login
         </Button>
+        <Box className="cart-icon" component={Link} to="/cart">
+          <div>
+            <ShoppingCartIcon />
+          </div>
+          <span className="cart-badge">{numberProducts}</span>
+        </Box>
         <Button color="inherit" component={Link} to="/admin">
           admin
         </Button>
