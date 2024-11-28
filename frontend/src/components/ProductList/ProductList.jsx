@@ -1,18 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   Card,
   CardMedia,
   CardContent,
   Typography,
   Button,
-  Slider,
   InputLabel,
   FormControl,
   Select,
   MenuItem,
-  TextField,
   Rating,
+  IconButton,
 } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import useProducts from "../../hooks/useProducts";
@@ -21,56 +22,23 @@ import "./ProductList.scss";
 import { useDispatch } from "react-redux";
 import { setProducts } from "../../redux/actions/productsActions";
 import { productDelite } from "../../redux/actions/productsActions";
+import useCategories from "../../hooks/useCategories";
+import useUpdateCategory from "../../hooks/useUpdateCategory";
+import Filter from "../Filter/Filter";
 import axios from "axios";
 
 // ==========================================
-const ProductList = () => {
+const ProductList = ({ onEdit }) => {
   const dispatch = useDispatch();
   useProducts();
   let products = useSelector((state) => state.products);
-  const [categories, setCategories] = useState([]);
-  const [value, setValue] = useState(0);
-  const [priceRange, setPriceRange] = useState([0, 1000]);
 
-  //------------  категории
-  useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/categories`)
-      .then((response) => {
-        setCategories(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching categories:", error);
-      });
-  }, []);
-  // Обновляем категорию продукта
-  const handleCategoryChange = (productId, newCategoryId) => {
-    axios
-      .put(
-        `${process.env.REACT_APP_API_URL}/products/${productId}/updateCategory`,
-        {
-          category: newCategoryId,
-        }
-      )
-      .then((response) => {
-        // Обновляем продукт в хранилище Redux
-        dispatch(
-          setProducts(
-            products.map((product) =>
-              product._id === productId ? response.data : product
-            )
-          )
-        );
-      })
-      .catch((error) => {
-        console.error("Error updating category:", error);
-      });
-  };
-  // --------------------
-
-  // ------------------------------------
+  //------------ Categories
+  const categories = useCategories();
+  const handleCategoryChange = useUpdateCategory(products);
+  // -----------------Rating-------------------
   const handleRatingChange = async (event, newValue, product) => {
-    setValue(newValue);
+    console.log(newValue, product.rating);
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/products/rate`,
@@ -79,11 +47,13 @@ const ProductList = () => {
           rating: newValue,
         }
       );
-      console.log("Rating updated:", response.data);
+      console.log("Rating updated:", response.data.product.rating);
       dispatch(
         setProducts(
           products.map((prod) =>
-            prod._id === product._id ? response.data.product : prod
+            prod._id === product._id
+              ? { ...prod, rating: response.data.product.rating }
+              : prod
           )
         )
       );
@@ -91,48 +61,14 @@ const ProductList = () => {
       console.error("Error updating rating:", error);
     }
   };
-  // ------------------------------------
-  const applyFilters = () => {
-    const filters = {
-      minPrice: priceRange[0],
-      maxPrice: priceRange[1],
-    };
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/products`, { params: filters })
-      .then((response) => {
-        const productsWithCategoryNames = response.data.map((product) => ({
-          ...product,
-          categoryName: product.category
-            ? product.category.name
-            : "No Category",
-        }));
-        console.log("Products with category names:", productsWithCategoryNames);
-        dispatch(setProducts(productsWithCategoryNames));
-      })
-      .catch((error) => {
-        console.error("Error fetching products with filters:", error);
-      });
-  };
 
-  // ----------------------------------
-  const handlePriceChange = (event, position) => {
-    let value = Number(event.target.value);
-    if (isNaN(value) || value < 0) value = 0;
-    if (position === "min") {
-      if (value > priceRange[1]) value = priceRange[1];
-      setPriceRange([value, priceRange[1]]);
-    } else if (position === "max") {
-      if (value < priceRange[0]) value = priceRange[0];
-      setPriceRange([priceRange[0], value]);
-    }
-  };
+  // --------------------------------
 
-  useEffect(() => {
-    if (priceRange[0] > priceRange[1]) {
-      setPriceRange([priceRange[1], priceRange[0]]);
-    }
-  }, [priceRange]);
-  // ----------------------------------
+  // --------------------------------
+  const handleProductEdit = (product) => {
+    console.log(product);
+  };
+  // --------------------------------
 
   // --------------------------------
   const handlerProductDelite = async (product) => {
@@ -152,50 +88,8 @@ const ProductList = () => {
   return (
     <div className="Allproducts">
       {/* ----------------Форма фильтрации------------------*/}
-      <div className="filterContainer">
-        <Typography gutterBottom>Price Range</Typography>
-        <Slider
-          value={priceRange}
-          onChange={(_, newValue) => setPriceRange(newValue)}
-          valueLabelDisplay="auto"
-          valueLabelFormat={(value) => `${value} $.`}
-          min={0}
-          max={1000}
-        />
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-          }}
-        >
-          <TextField
-            label="Min Price"
-            variant="outlined"
-            type="number"
-            value={priceRange[0]}
-            onChange={(e) => handlePriceChange(e, "min")}
-            style={{ width: "48%" }}
-            inputProps={{ min: 0 }}
-          />
-          <TextField
-            label="Max Price"
-            variant="outlined"
-            type="number"
-            value={priceRange[1]}
-            onChange={(e) => handlePriceChange(e, "max")}
-            style={{ width: "48%" }}
-            inputProps={{ min: 0 }}
-          />
-        </div>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={applyFilters}
-          style={{ marginTop: "20px" }}
-        >
-          Apply Filters
-        </Button>
-      </div>
+      <Filter />
+
       {/* -------------------- */}
       <div className="Allproducts-container">
         {products.map((product) => (
@@ -216,9 +110,9 @@ const ProductList = () => {
               {/*  рейтинг  */}
               <Rating
                 onChange={(e, newValue) =>
-                  handleRatingChange(e, newValue, product)
+                  handleRatingChange(e, newValue || 5, product)
                 }
-                value={product.rating || 0} // Используем текущий рейтинг
+                value={product.rating}
                 precision={0.5}
               />
               <Typography variant="p">Average rating</Typography>
@@ -249,14 +143,17 @@ const ProductList = () => {
               </Link>
               {!isCart && !isAdmin && <AddToCart product={product} />}
               {isAdmin && (
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  className="deliteCard"
-                  onClick={() => handlerProductDelite(product)}
-                >
-                  Delite
-                </Button>
+                <>
+                  <IconButton onClick={() => onEdit(product)}>
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton
+                    className="deliteCard"
+                    onClick={() => handlerProductDelite(product)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </>
               )}
             </CardContent>
           </Card>

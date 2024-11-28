@@ -1,31 +1,32 @@
 import React, { useState } from "react";
-import {
-  Grid,
-  Typography,
-  Paper,
-  Box,
-  Button,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
-} from "@mui/material";
+import { Typography, List, ListItem, ListItemText } from "@mui/material";
 import ProductList from "../../components/ProductList/ProductList";
 import AddProductForm from "../../components/AddProductForm";
 import CategoryesList from "../../components/CategoryesList/CategoryesList";
 import "./AdminPage.scss";
 const AdminPage = () => {
-  const [selectedTab, setSelectedTab] = useState("products"); // Текущая вкладка
-  // const [drawerOpen, setDrawerOpen] = useState(false);
-  // const toggleDrawer = () => setDrawerOpen(!drawerOpen);
+  const [selectedTab, setSelectedTab] = useState("products");
+  const [productToEdit, setProductToEdit] = useState(null);
+
+  // --------------------------
+
+  // --------------------------
   const handlerSelectedTab = (e, data) => {
     setSelectedTab(data);
   };
+
+  // --------------------------
+
+  // --------------------------
+  const handleProductEdit = (product) => {
+    setProductToEdit(product);
+    setSelectedTab("addProduct");
+  };
+  // --------------------------
+
+  // --------------------------
   return (
     <div className="admin">
-      {/* <Button variant="contained" color="primary" onClick={toggleDrawer}>
-        Open Menu
-      </Button> */}
       <div anchor="left" className="adminMenu">
         <Typography variant="h4" marginTop={2}>
           Admin Panel
@@ -71,31 +72,17 @@ const AdminPage = () => {
         </List>
       </div>
       <div className="content">
-        {selectedTab === "products" && <ProductList />}
-        {selectedTab === "addProduct" && <AddProductForm />}
+        {selectedTab === "products" && (
+          <ProductList onEdit={handleProductEdit} />
+        )}
+        {selectedTab === "addProduct" && (
+          <AddProductForm
+            productToEdit={productToEdit}
+            setProductToEdit={setProductToEdit}
+          />
+        )}
         {selectedTab === "categories" && <CategoryesList />}
       </div>
-      {/* <Typography variant="h4" gutterBottom>
-        Админпанель
-      </Typography> */}
-      {/* <Box>
-        <Typography variant="h6" gutterBottom>
-          Список товаров
-        </Typography>
-        <ProductList />
-      </Box> */}
-
-      {/* Форма добавления товаров */}
-      {/* <Grid item xs={12} marginTop={3}>
-        <Paper elevation={3}>
-          <Box p={3}>
-            <Typography variant="h6" gutterBottom>
-              Добавить товар
-            </Typography>
-            <AddProductForm />
-          </Box>
-        </Paper>
-      </Grid> */}
     </div>
   );
 };

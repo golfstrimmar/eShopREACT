@@ -11,6 +11,8 @@
 .productImage {
   aspect-ratio: 1.9 / 1;
   height: auto;
+  max-height: 280px;
+  max-width: 533px;
 }
 .productContent {
   display: flex;

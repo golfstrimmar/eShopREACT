@@ -5,6 +5,11 @@
   grid-template-columns: 250px repeat(auto-fill, 658px);
   gap: 30px;
 }
+.Allproducts-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
 .cardContent {
   display: flex;
   flex-direction: column;
@@ -33,6 +38,12 @@
   }
   .deliteCard {
     margin-top: auto;
+    color: $act !important;
+    width: 30px;
+    height: 30px;
+    &:hover {
+      background-color: transparent !important;
+    }
   }
   @media (max-width: 767px) {
     grid-template-columns: 1fr;

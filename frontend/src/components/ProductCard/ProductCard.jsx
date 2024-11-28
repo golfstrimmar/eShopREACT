@@ -7,10 +7,14 @@ import {
   Button,
   Rating,
 } from "@mui/material";
-import { Link } from "react-router-dom";
 import AddToCart from "../AddToCart/AddToCart";
+import { Link, useLocation } from "react-router-dom";
 
+// -------------------------------------------
 const ProductCard = ({ product, handleRatingChange }) => {
+  const location = useLocation();
+  const isCart = location.pathname.includes("/cart");
+  const isAdmin = location.pathname.includes("/admin");
   return (
     <Card key={product._id} className="productCard">
       <CardMedia
@@ -25,18 +29,49 @@ const ProductCard = ({ product, handleRatingChange }) => {
         <Typography variant="p">
           Category: {product.category ? product.category.name : "No category"}
         </Typography>
+        {/*  рейтинг  */}
         <Rating
           onChange={(e, newValue) => handleRatingChange(e, newValue, product)}
-          value={product.rating || 0}
+          value={product.rating || 0} // Используем текущий рейтинг
           precision={0.5}
         />
+        <Typography variant="p">Average rating</Typography>
         <span>{product.rating || 0} / 5</span>
+        {/* Добавляем селект для изменения категории */}
+        {isAdmin && (
+          <FormControl fullWidth variant="outlined" margin="normal">
+            <InputLabel>Category</InputLabel>
+            <Select
+              value={product.category ? product.category._id : ""}
+              onChange={(e) =>
+                handleCategoryChange(product._id, e.target.value)
+              }
+              label="Category"
+            >
+              {categories.map((category) => (
+                <MenuItem key={category._id} value={category._id}>
+                  {category.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
         <Link to={`/product/${product._id}`} className="cardLink">
           <Button variant="outlined" color="primary">
             Learn more
           </Button>
         </Link>
-        <AddToCart product={product} />
+        {!isCart && !isAdmin && <AddToCart product={product} />}
+        {isAdmin && (
+          <Button
+            variant="outlined"
+            color="primary"
+            className="deliteCard"
+            onClick={() => handlerProductDelite(product)}
+          >
+            Delite
+          </Button>
+        )}
       </CardContent>
     </Card>
   );

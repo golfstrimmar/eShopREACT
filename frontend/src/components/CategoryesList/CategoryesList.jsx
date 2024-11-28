@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
   Typography,
-  Box,
   TextField,
   Button,
   CircularProgress,
@@ -99,32 +98,9 @@ const CategoryesList = () => {
         console.error("Error saving category:", error);
         setLoading(false);
       });
-
-    // axios
-    //   .post(`${process.env.REACT_APP_API_URL}/categories`, {
-    //     name: categoryName,
-    //   })
-    //   .then((response) => {
-    //     setCategories([...categories, response.data]);
-    //     setSuccessMessage("Category added successfully");
-    //     setTimeout(() => {
-    //       setSuccessMessage("");
-    //       setCategoryName("");
-    //       setLoading(false);
-    //     }, 1000);
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error adding category:", error);
-    //     setLoading(false);
-    //   });
   };
   return (
     <div className="categoryeslist">
-      {/* {categories.map((category) => (
-        <Typography variant="h5" key={category._id} value={category._id}>
-          {category ? category.name : "No category"}
-        </Typography>
-      ))} */}
       <List>
         {categories.map((category) => (
           <ListItem key={category._id} button>
@@ -138,26 +114,6 @@ const CategoryesList = () => {
           </ListItem>
         ))}
       </List>
-      {/* <Box component="form" onSubmit={handleSubmit} noValidate>
-        <TextField
-          label="Category Name"
-          fullWidth
-          value={categoryName}
-          onChange={(e) => setCategoryName(e.target.value)}
-          margin="normal"
-        />
-        {successMessage && (
-          <Typography color="success">{successMessage}</Typography>
-        )}
-        {loading && (
-          <div className="loading-container">
-            <CircularProgress />
-          </div>
-        )}
-        <Button variant="contained" color="primary" type="submit">
-          Add Category
-        </Button>
-      </Box> */}
       <form onSubmit={handleSubmit}>
         <Typography variant="h6">
           {categoryToEdit ? "Edit the category name" : "Add new category"}

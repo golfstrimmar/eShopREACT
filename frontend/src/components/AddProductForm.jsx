@@ -12,7 +12,7 @@ import { setProducts } from "../redux/actions/productsActions";
 import axios from "axios";
 import useProducts from "../hooks/useProducts";
 // ===============================================
-const AddProductForm = () => {
+const AddProductForm = ({ productToEdit, setProductToEdit }) => {
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
   const [price, setPrice] = useState(0);
@@ -29,7 +29,6 @@ const AddProductForm = () => {
 
   useEffect(() => {
     if (isSubmitting) {
-      setSuccessMessage("The product has been added successfully.");
       setLoading(false);
       setTimeout(() => {
         setName("");
@@ -44,6 +43,35 @@ const AddProductForm = () => {
   }, [isSubmitting]);
 
   // --------------------------
+
+  // --------------------------
+  useEffect(() => {
+    if (productToEdit) {
+      setName(productToEdit.name || "");
+      setPrice(productToEdit.price || 0);
+      setCategoryName(productToEdit.category?.name || "");
+      setDescription(productToEdit.description || "");
+      setImage(productToEdit.image || null);
+      setImagePreview(productToEdit.image || null);
+    }
+  }, [productToEdit]);
+  useEffect(() => {
+    if (isSubmitting) {
+      setLoading(false);
+      setTimeout(() => {
+        setName("");
+        setPrice("");
+        setCategoryName("");
+        setDescription("");
+        setImage(null);
+        setImagePreview(null);
+        setSuccessMessage("");
+      }, 1000);
+    }
+  }, [isSubmitting]);
+  // --------------------------
+
+  // --------------------------
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setImage(file);
@@ -56,7 +84,16 @@ const AddProductForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name.trim() || !price || !image || !categoryName.trim()) {
+
+    // console.log(name, price, categoryName, description, "image:" + image);
+
+    if (
+      !name.trim() ||
+      !price ||
+      !image ||
+      !description ||
+      !categoryName.trim()
+    ) {
       setErrorMessage("All fields are required.");
       return;
     }
@@ -91,52 +128,36 @@ const AddProductForm = () => {
         formData.append("image", imageUrl);
       }
       // --------------------
-      // try {
-      //   setLoading(true);
-      //   setErrorMessage("");
-      //   setIsSubmitting(false);
-
-      //   const formData = new FormData();
-      //   formData.append("name", name);
-      //   formData.append("price", price);
-      //   formData.append("category", category._id);
-      //   formData.append("description", description);
-
-      //   if (image) {
-      //     const imageFormData = new FormData();
-      //     imageFormData.append("file", image);
-      //     imageFormData.append("upload_preset", "blogblog");
-      //     imageFormData.append("cloud_name", "dke0nudcz");
-      //     const imageResponse = await axios.post(
-      //       "https://api.cloudinary.com/v1_1/dke0nudcz/image/upload",
-      //       imageFormData
-      //     );
-      //     const imageUrl = imageResponse.data.secure_url;
-      //     formData.append("image", imageUrl);
-      //   }
-
-      //   const response = await axios.post(
-      //     `${process.env.REACT_APP_API_URL}/products/add`,
-      //     formData
-      //   );
-      //   dispatch(setProducts([...products, response.data]));
-      //   setIsSubmitting(true);
-      //   setSuccessMessage("The product has been added successfully.");
-      // } catch (error) {
-      //   setLoading(false);
-      //   console.error("Error adding product:", error);
-      //   setErrorMessage("Failed to add product. Please try again.", error);
-      // } finally {
-      //   setLoading(false);
-      // }
-
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/products/add`,
-        formData
-      );
-      dispatch(setProducts([...products, response.data]));
+      let response;
+      if (productToEdit) {
+        // formData.forEach((value, key) => {
+        //   console.log(key, value);
+        // });
+        response = await axios.put(
+          `${process.env.REACT_APP_API_URL}/products/${productToEdit._id}`,
+          formData
+        );
+        dispatch(
+          setProducts(
+            products.map((prod) =>
+              prod._id === productToEdit._id ? response.data : prod
+            )
+          )
+        );
+        setSuccessMessage("The product has been updated successfully.");
+        setProductToEdit(null);
+      } else {
+        // formData.forEach((value, key) => {
+        //   console.log(key, value);
+        // });
+        response = await axios.post(
+          `${process.env.REACT_APP_API_URL}/products/add`,
+          formData
+        );
+        dispatch(setProducts([...products, response.data]));
+        setSuccessMessage("The product has been added successfully.");
+      }
       setIsSubmitting(true);
-      setSuccessMessage("Продукт был успешно добавлен.");
     } catch (error) {
       console.error("Ошибка при добавлении продукта:", error);
       setErrorMessage(
@@ -220,7 +241,7 @@ const AddProductForm = () => {
         </div>
       )}
       <Button variant="contained" color="primary" type="submit">
-        Add Product
+        {productToEdit ? "Update Product" : "Add Product"}
       </Button>
     </Box>
   );

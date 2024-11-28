@@ -5,6 +5,7 @@ import {
   deliteProduct,
   updateProductCategory,
   rateProduct,
+  updateProduct,
 } from "../controllers/productController.js";
 
 const router = express.Router();
@@ -13,4 +14,5 @@ router.post("/add", addProduct);
 router.post("/delite", deliteProduct);
 router.put("/:productId/updateCategory", updateProductCategory);
 router.post("/rate", rateProduct);
+router.put("/:productId", updateProduct);
 export default router;

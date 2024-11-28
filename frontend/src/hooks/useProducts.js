@@ -9,8 +9,9 @@ const useProducts = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        const filters = {};
         await axios
-          .get(`${process.env.REACT_APP_API_URL}/products`)
+          .get(`${process.env.REACT_APP_API_URL}/products`, { params: filters })
           .then((response) => {
             const productsWithCategoryNames = response.data.map((product) => ({
               ...product,

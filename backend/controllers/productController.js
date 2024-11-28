@@ -67,7 +67,7 @@ export const deliteProduct = async (req, res) => {
 };
 // ----------------------------------------
 export const getProducts = async (req, res) => {
-  const { minPrice, maxPrice } = req.query;
+  const { minPrice, maxPrice, categories } = req.query;
 
   try {
     const filter = {};
@@ -80,6 +80,9 @@ export const getProducts = async (req, res) => {
         filter.price = {};
       }
       filter.price.$lte = Number(maxPrice);
+    }
+    if (categories && categories.length > 0) {
+      filter.category = { $in: categories };
     }
 
     const products = await Product.find(filter).populate({
@@ -128,15 +131,18 @@ export const updateProductCategory = async (req, res) => {
 };
 // ---------------------------
 const roundToHalf = (num) => {
-  return Math.round(num * 2) / 2;
+  return Math.round(num);
 };
 export const rateProduct = async (req, res) => {
   const { productId, rating } = req.body;
 
+  if (rating < 0.5) {
+    rating = 1;
+  }
   if (rating < 0.5 || rating > 5) {
     return res
       .status(400)
-      .json({ message: "Rating must be between 0.5 and 5" });
+      .json({ message: "Rating must be between 0.5 and 5", rating });
   }
 
   try {
@@ -152,5 +158,37 @@ export const rateProduct = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to update rating" });
+  }
+};
+export const updateProduct = async (req, res) => {
+  const { productId } = req.params;
+  const { name, price, description, image, category } = req.body;
+
+  try {
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    const categoryDocument = await Category.findById(category);
+    if (!categoryDocument) {
+      return res.status(400).json({ message: "Category not found" });
+    }
+
+    product.name = name || product.name;
+    product.price = price || product.price;
+    product.description = description || product.description;
+    product.category = categoryDocument._id || product.category;
+    product.image = image || product.image;
+
+    await product.save();
+
+    const populatedProduct = await Product.findById(product._id).populate(
+      "category"
+    );
+    res.status(200).json(populatedProduct);
+  } catch (error) {
+    console.error("Error updating product:", error);
+    res.status(500).json({ message: "Error updating product", error });
   }
 };
