@@ -22,6 +22,7 @@ import "./ProductList.scss";
 import { useDispatch } from "react-redux";
 import { setProducts } from "../../redux/actions/productsActions";
 import { productDelite } from "../../redux/actions/productsActions";
+import { deliteFromCart } from "../../redux/actions/cartActions";
 import useCategories from "../../hooks/useCategories";
 import useUpdateCategory from "../../hooks/useUpdateCategory";
 import Filter from "../Filter/Filter";
@@ -36,9 +37,9 @@ const ProductList = ({ onEdit }) => {
   //------------ Categories
   const categories = useCategories();
   const handleCategoryChange = useUpdateCategory(products);
+
   // -----------------Rating-------------------
   const handleRatingChange = async (event, newValue, product) => {
-    console.log(newValue, product.rating);
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/products/rate`,
@@ -65,10 +66,6 @@ const ProductList = ({ onEdit }) => {
   // --------------------------------
 
   // --------------------------------
-  const handleProductEdit = (product) => {
-    console.log(product);
-  };
-  // --------------------------------
 
   // --------------------------------
   const handlerProductDelite = async (product) => {
@@ -78,6 +75,7 @@ const ProductList = ({ onEdit }) => {
     );
     setProducts(products.filter((item) => item._id !== product._id));
     dispatch(productDelite(product));
+    dispatch(deliteFromCart(product._id));
   };
   // --------------------------------------
   const location = useLocation();
@@ -104,9 +102,13 @@ const ProductList = ({ onEdit }) => {
               <Typography variant="h4">{product.name}</Typography>
               <Typography variant="p">Price: {product.price} $</Typography>
               <Typography variant="p">
+                Description: {product.description}
+              </Typography>
+              <Typography variant="p">
                 Category:{" "}
                 {product.category ? product.category.name : "No category"}
               </Typography>
+
               {/*  рейтинг  */}
               <Rating
                 onChange={(e, newValue) =>

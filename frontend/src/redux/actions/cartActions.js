@@ -16,3 +16,8 @@ export const deliteFromCart = (productId) => ({
 export const clearCart = () => ({
   type: "CLEAR_CART",
 });
+
+export const updateCartItem = (product) => ({
+  type: "UPDATE_CART_ITEM",
+  payload: product,
+});

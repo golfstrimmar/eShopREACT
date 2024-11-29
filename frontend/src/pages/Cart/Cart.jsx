@@ -4,7 +4,6 @@ import {
   Button,
   List,
   ListItem,
-  ListItemText,
   Divider,
   Typography,
   CardMedia,
@@ -12,8 +11,6 @@ import {
 } from "@mui/material";
 import "./Cart.scss";
 import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add"; // Иконка "+" для добавления
-import RemoveIcon from "@mui/icons-material/Remove";
 // =====================actions====================
 import {
   removeFromCart,
@@ -26,7 +23,7 @@ import {
 const Cart = () => {
   const cartItems = useSelector((state) => state.cart);
   const dispatch = useDispatch();
-
+  cartItems.map((item) => console.log(item));
   // Удалить товар из корзины
   const handleDeleteFromCart = (productId) => {
     dispatch(deliteFromCart(productId));
@@ -71,14 +68,12 @@ const Cart = () => {
               <Box className="productContent">
                 <Typography variant="h4">{item.name}</Typography>
                 <Typography variant="p">Price: {item.price} $.</Typography>
-                {/* <Button
-                  variant="outlined"
-                  color="secondary"
-                  onClick={() => handleDecreaseQuantity(item._id)}
-                  style={{ marginRight: 10 }}
-                >
-                  -
-                </Button> */}
+                <Typography variant="p">
+                  Description: {item.description}.
+                </Typography>
+                <Typography variant="p">
+                  Category: {item.category ? item.category.name : "No category"}
+                </Typography>
                 <Typography variant="p">Quantity:</Typography>
                 <Typography variant="p" className="cardPrice">
                   <span onClick={() => handleDecreaseQuantity(item._id)}>

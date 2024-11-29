@@ -60,7 +60,6 @@ const Filter = () => {
       maxPrice: priceRange[1],
       categories: selectedCategories,
     };
-
     axios
       .get(`${process.env.REACT_APP_API_URL}/products`, { params: filters })
       .then((response) => {

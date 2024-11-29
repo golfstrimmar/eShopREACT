@@ -5,6 +5,7 @@ import multer from "multer";
 import dotenv from "dotenv";
 import productRoutes from "./routes/productRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
+import brandsRoutes from "./routes/brandsRoutes.js";
 
 // --------------------------------------------------
 const upload = multer();
@@ -44,6 +45,8 @@ app.use(
 );
 // ====================================
 app.use("/categories", upload.none(), categoryRoutes);
+// ====================================
+app.use("/brands", upload.none(), brandsRoutes);
 // ====================================
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

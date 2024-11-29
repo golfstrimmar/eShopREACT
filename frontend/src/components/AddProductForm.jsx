@@ -6,17 +6,18 @@ import {
   Input,
   Typography,
   CircularProgress,
+  CardMedia,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { setProducts } from "../redux/actions/productsActions";
 import axios from "axios";
 import useProducts from "../hooks/useProducts";
+import { updateCartItem } from "../redux/actions/cartActions";
 // ===============================================
 const AddProductForm = ({ productToEdit, setProductToEdit }) => {
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
   const [price, setPrice] = useState(0);
-  const [categoryName, setCategoryName] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
@@ -33,7 +34,6 @@ const AddProductForm = ({ productToEdit, setProductToEdit }) => {
       setTimeout(() => {
         setName("");
         setPrice("");
-        setCategoryName("");
         setDescription("");
         setImage(null);
         setImagePreview(null);
@@ -49,7 +49,6 @@ const AddProductForm = ({ productToEdit, setProductToEdit }) => {
     if (productToEdit) {
       setName(productToEdit.name || "");
       setPrice(productToEdit.price || 0);
-      setCategoryName(productToEdit.category?.name || "");
       setDescription(productToEdit.description || "");
       setImage(productToEdit.image || null);
       setImagePreview(productToEdit.image || null);
@@ -61,7 +60,6 @@ const AddProductForm = ({ productToEdit, setProductToEdit }) => {
       setTimeout(() => {
         setName("");
         setPrice("");
-        setCategoryName("");
         setDescription("");
         setImage(null);
         setImagePreview(null);
@@ -85,33 +83,32 @@ const AddProductForm = ({ productToEdit, setProductToEdit }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // console.log(name, price, categoryName, description, "image:" + image);
+    console.log(
+      "name:" + name,
+      "price" + price,
+      "description" + description,
 
-    if (
-      !name.trim() ||
-      !price ||
-      !image ||
-      !description ||
-      !categoryName.trim()
-    ) {
+      "image:" + image
+    );
+    // ------------
+    if (productToEdit && (!name.trim() || !price || !image || !description)) {
+      setErrorMessage("All fields are required.");
+      return;
+    } else if (!name.trim() || !price || !image || !description) {
       setErrorMessage("All fields are required.");
       return;
     }
+    // ------------
     try {
       setLoading(true);
       setErrorMessage("");
       setIsSubmitting(false);
       // -----------------
-      const categoryResponse = await axios.post(
-        `${process.env.REACT_APP_API_URL}/categories`,
-        { name: categoryName.trim() }
-      );
-      let category = categoryResponse.data;
+
       // ----------------------
       const formData = new FormData();
       formData.append("name", name);
       formData.append("price", price);
-      formData.append("category", category._id);
       formData.append("description", description);
       // --------------------
       if (image) {
@@ -143,6 +140,9 @@ const AddProductForm = ({ productToEdit, setProductToEdit }) => {
               prod._id === productToEdit._id ? response.data : prod
             )
           )
+        );
+        dispatch(
+          updateCartItem({ ...response.data, category: productToEdit.category })
         );
         setSuccessMessage("The product has been updated successfully.");
         setProductToEdit(null);
@@ -185,14 +185,7 @@ const AddProductForm = ({ productToEdit, setProductToEdit }) => {
         onChange={(e) => setPrice(e.target.value)}
         margin="normal"
       />
-      {/* Текстовое поле для ввода категории */}
-      <TextField
-        label="Product Category"
-        fullWidth
-        value={categoryName}
-        onChange={(e) => setCategoryName(e.target.value)}
-        margin="normal"
-      />
+
       <TextField
         label="Product description"
         fullWidth
@@ -200,7 +193,7 @@ const AddProductForm = ({ productToEdit, setProductToEdit }) => {
         onChange={(e) => setDescription(e.target.value)}
         margin="normal"
       />
-      {/* Кастомизированное поле для загрузки изображения */}
+
       <label htmlFor="image-upload">
         <Button
           variant="outlined"
@@ -219,14 +212,16 @@ const AddProductForm = ({ productToEdit, setProductToEdit }) => {
       />
       {imagePreview && (
         <Box sx={{ marginBottom: 2, textAlign: "center" }}>
-          <img
-            src={imagePreview}
-            alt="Image preview"
+          <CardMedia
+            component="img"
+            image={imagePreview}
+            alt={name}
             style={{
               width: 100,
               height: 100,
               objectFit: "cover",
               borderRadius: 8,
+              margin: "auto",
             }}
           />
         </Box>
@@ -240,7 +235,14 @@ const AddProductForm = ({ productToEdit, setProductToEdit }) => {
           <CircularProgress />
         </div>
       )}
-      <Button variant="contained" color="primary" type="submit">
+      <Button
+        variant="contained"
+        color="primary"
+        type="submit"
+        style={{
+          margin: "0 auto",
+        }}
+      >
         {productToEdit ? "Update Product" : "Add Product"}
       </Button>
     </Box>
