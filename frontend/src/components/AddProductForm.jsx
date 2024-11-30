@@ -87,7 +87,6 @@ const AddProductForm = ({ productToEdit, setProductToEdit }) => {
       "name:" + name,
       "price" + price,
       "description" + description,
-
       "image:" + image
     );
     // ------------
@@ -144,6 +143,10 @@ const AddProductForm = ({ productToEdit, setProductToEdit }) => {
         dispatch(
           updateCartItem({ ...response.data, category: productToEdit.category })
         );
+        const updatedProducts = products.map((prod) =>
+          prod._id === productToEdit._id ? response.data : prod
+        );
+        localStorage.setItem("products", JSON.stringify(updatedProducts));
         setSuccessMessage("The product has been updated successfully.");
         setProductToEdit(null);
       } else {
@@ -155,6 +158,8 @@ const AddProductForm = ({ productToEdit, setProductToEdit }) => {
           formData
         );
         dispatch(setProducts([...products, response.data]));
+        const newProducts = [...products, response.data];
+        localStorage.setItem("products", JSON.stringify(newProducts));
         setSuccessMessage("The product has been added successfully.");
       }
       setIsSubmitting(true);
