@@ -7,6 +7,7 @@ import AdminPage from "../pages/AdminPage/AdminPage";
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 import Profile from "../pages/Profile";
+import Checkout from "../pages/Checkout";
 const AppRouter = () => (
   <Routes>
     <Route path="/" element={<Home />} />
@@ -16,6 +17,7 @@ const AppRouter = () => (
     <Route path="/login" element={<Login />} />
     <Route path="/register" element={<Register />} />
     <Route path="/profile" element={<Profile />} />
+    <Route path="/checkout" element={<Checkout />} />
   </Routes>
 );
 

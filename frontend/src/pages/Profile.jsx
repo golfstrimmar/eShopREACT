@@ -1,14 +1,54 @@
-// src/components/Profile.js
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Container, Box, Typography, Paper } from "@mui/material";
+import {
+  Container,
+  Box,
+  Typography,
+  Paper,
+  List,
+  ListItem,
+  Divider,
+} from "@mui/material";
+import axios from "axios";
 const Profile = () => {
-  const user = useSelector((state) => state.auth.user);
-  console.log("user", user);
+  const user = useSelector((state) => state.auth.user); // Получаем пользователя из Redux
+  const [orders, setOrders] = useState([]);
+  const token = useSelector((state) => state.auth.token); // Получаем JWT токен из Redux
+
+  useEffect(() => {
+    if (user && token) {
+      console.log("user", user);
+      console.log("token", user);
+      const fetchOrders = async () => {
+        try {
+          const response = await axios.get(
+            `${process.env.REACT_APP_API_URL}/orders`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          console.log(user.id);
+          const userOrders = response.data.filter(
+            (order) => order.user._id === user.id
+          );
+          console.log("allOrders:", response.data);
+          console.log("userOrders", userOrders);
+          setOrders(userOrders);
+        } catch (error) {
+          console.error("Error fetching orders:", error);
+        }
+      };
+
+      fetchOrders();
+    }
+  }, [user, token]);
+
   if (!user) {
     return (
       <Container maxWidth="sm">
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 4, mb: 4 }}>
           <Typography variant="h6">
             Please log in to view your profile.
           </Typography>
@@ -16,7 +56,6 @@ const Profile = () => {
       </Container>
     );
   }
-
   return (
     <Container maxWidth="sm">
       <Box
@@ -25,6 +64,7 @@ const Profile = () => {
           flexDirection: "column",
           alignItems: "center",
           mt: 4,
+          mb: 4,
         }}
       >
         <Paper sx={{ padding: 3, width: "100%" }}>
@@ -37,6 +77,53 @@ const Profile = () => {
           <Typography variant="h6" gutterBottom>
             Email: {user.email}
           </Typography>
+
+          <Typography variant="h5" sx={{ mt: 4 }}>
+            Your Orders:
+          </Typography>
+          <List>
+            {orders.length > 0 ? (
+              orders.map((order) => (
+                <ListItem key={order._id}>
+                  <Box sx={{ display: "flex", flexDirection: "column" }}>
+                    <Typography variant="h6">Order ID: {order._id}</Typography>
+                    {/* Отображаем список продуктов в заказе */}
+                    {order.products.map((product, index) => (
+                      <Box
+                        key={index}
+                        sx={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Typography variant="body1" sx={{ marginRight: 1 }}>
+                          {product.productId
+                            ? product.productId.name
+                            : "Product name not found"}
+                        </Typography>
+                        <Typography variant="body1">
+                          x {product.quantity}
+                        </Typography>
+                      </Box>
+                    ))}
+                    <Typography variant="body1">
+                      Status: {order.status}
+                    </Typography>
+                    <Typography variant="body1">
+                      Total: {order.totalAmount} руб.
+                    </Typography>
+                    <Typography variant="body2">
+                      Date: {new Date(order.createdAt).toLocaleDateString()}
+                    </Typography>
+                  </Box>
+                  <Divider sx={{ marginY: 2 }} />
+                </ListItem>
+              ))
+            ) : (
+              <Typography variant="body1">You have no orders yet.</Typography>
+            )}
+          </List>
         </Paper>
       </Box>
     </Container>

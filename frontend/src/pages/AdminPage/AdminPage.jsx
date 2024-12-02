@@ -3,12 +3,14 @@ import { Typography, List, ListItem, ListItemText } from "@mui/material";
 import ProductList from "../../components/ProductList/ProductList";
 import AddProductForm from "../../components/AddProductForm";
 import CategoryesList from "../../components/CategoryesList/CategoryesList";
+import OrdersList from "../../components/OrdersList/OrdersList";
 import "./AdminPage.scss";
+// ---------------------------
+
+// ---------------------------
 const AdminPage = () => {
   const [selectedTab, setSelectedTab] = useState("products");
   const [productToEdit, setProductToEdit] = useState(null);
-
-  // --------------------------
 
   // --------------------------
   const handlerSelectedTab = (e, data) => {
@@ -69,6 +71,18 @@ const AdminPage = () => {
           >
             <ListItemText primary="Categories" />
           </ListItem>
+          <ListItem
+            button
+            onClick={(e) => {
+              handlerSelectedTab(e, "orders");
+            }}
+            style={{
+              backgroundColor:
+                selectedTab === "orders" ? "rgba(0, 0, 0, 0.05)" : "",
+            }}
+          >
+            <ListItemText primary="Orders" />
+          </ListItem>
         </List>
       </div>
       <div className="content">
@@ -82,6 +96,7 @@ const AdminPage = () => {
           />
         )}
         {selectedTab === "categories" && <CategoryesList />}
+        {selectedTab === "orders" && <OrdersList />}
       </div>
     </div>
   );

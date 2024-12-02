@@ -1,13 +1,10 @@
 // src/components/Register.js
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
 import axios from "axios";
-import { setUser } from "../../redux/actions/authActions";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Typography, Container, Box } from "@mui/material";
 
 const Register = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
@@ -15,7 +12,11 @@ const Register = () => {
     password: "",
   });
   const [errors, setErrors] = useState({});
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  // ------------------------------------------------------
 
+  // ------------------------------------------------------
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -37,18 +38,22 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
+    setErrorMessage("");
+    setSuccessMessage("");
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
       try {
-        const response = await axios.post(
+        await axios.post(
           `${process.env.REACT_APP_API_URL}/auth/register`,
           formData
         );
-        const { data } = response;
-        dispatch(setUser(data.user, data.token));
-        navigate("/login");
+        setSuccessMessage("Registration successful");
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000);
       } catch (error) {
+        setErrorMessage(error.response.data.message);
         console.error(error.response.data);
       }
     }
@@ -62,6 +67,7 @@ const Register = () => {
           flexDirection: "column",
           alignItems: "center",
           mt: 4,
+          mb: 4,
         }}
       >
         <Typography variant="h5" gutterBottom>
@@ -108,12 +114,16 @@ const Register = () => {
               variant="outlined"
             />
           </div>
+          {errors && <Typography color="error">{errorMessage}</Typography>}
+          {successMessage && (
+            <Typography color="success">{successMessage}</Typography>
+          )}
           <Button
             fullWidth
             variant="contained"
             color="primary"
             type="submit"
-            sx={{ mt: 2 }}
+            sx={{ mt: 1 }}
           >
             Register
           </Button>

@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../redux/actions/authActions";
+
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Typography, Container, Box } from "@mui/material";
@@ -14,7 +15,10 @@ const Login = () => {
     password: "",
   });
   const [errors, setErrors] = useState({});
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
+  // ---------------------------------------
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -33,6 +37,8 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage("");
+    setSuccessMessage("");
     const validationErrors = validate();
     setErrors(validationErrors);
 
@@ -48,9 +54,13 @@ const Login = () => {
         localStorage.setItem("token", token);
 
         dispatch(setUser(user, token));
-        navigate("/profile");
-        console.log("login success");
+        setSuccessMessage("Login successful");
+
+        setTimeout(() => {
+          navigate("/profile");
+        }, 2000);
       } catch (error) {
+        setErrorMessage(error.response.data.message);
         console.error(error.response.data);
       }
     }
@@ -64,6 +74,7 @@ const Login = () => {
           flexDirection: "column",
           alignItems: "center",
           mt: 4,
+          mb: 4,
         }}
       >
         <Typography variant="h5" gutterBottom>
@@ -97,6 +108,10 @@ const Login = () => {
               variant="outlined"
             />
           </div>
+          {errors && <Typography color="error">{errorMessage}</Typography>}
+          {successMessage && (
+            <Typography color="success">{successMessage}</Typography>
+          )}
           <Button
             fullWidth
             variant="contained"

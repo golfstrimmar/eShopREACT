@@ -10,6 +10,7 @@ import {
   Box,
 } from "@mui/material";
 import "./Cart.scss";
+import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 // =====================actions====================
 import {
@@ -23,6 +24,7 @@ import {
 const Cart = () => {
   const cartItems = useSelector((state) => state.cart);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   cartItems.map((item) => console.log(item));
   // Удалить товар из корзины
   const handleDeleteFromCart = (productId) => {
@@ -49,7 +51,10 @@ const Cart = () => {
     (total, item) => total + item.price * item.quantity,
     0
   );
-
+  // Переход на страницу оформления заказа
+  const handleCheckout = () => {
+    navigate("/checkout"); // Переходим на страницу оформления заказа
+  };
   return (
     <div className="pageContent">
       <Typography variant="h4" gutterBottom>
@@ -111,6 +116,7 @@ const Cart = () => {
             variant="contained"
             color="primary"
             style={{ marginTop: "10px" }}
+            onClick={handleCheckout}
           >
             Оформить заказ
           </Button>

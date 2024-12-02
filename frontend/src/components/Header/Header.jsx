@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import "./Header.scss";
 import { setUser } from "../../redux/actions/authActions";
+import { clearCart } from "../../redux/actions/cartActions";
 const Header = () => {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.user); // Получаем пользователя из Redux
-  const isAuthenticated = user !== null; // Если пользователь есть, то он авторизован
+  const user = useSelector((state) => state.auth.user);
+  const isAuthenticated = user !== null;
   const [numberProducts, setNumberProducts] = useState(0);
-  const [actPoint, setActPoint] = useState("Home");
-
+  const [actPoint, setActPoint] = useState("");
+  const location = useLocation();
+  const [isAdmin, setIsAdmin] = useState(false);
+  // ------------------------------
   let temp = useSelector((state) => state.cart);
   const dispatchCart = () => {
     setNumberProducts(temp.length);
@@ -20,24 +23,29 @@ const Header = () => {
     dispatchCart();
   }, [temp]);
   // ---------------------------------------
-  // const [isAuthenticated, setIsAuthenticated] = useState(false);
-  // const [user, setUser] = useState(null);
-  // useEffect(() => {
-  //   const userData = localStorage.getItem("user"); // Получаем данные пользователя из localStorage
-  //   if (userData) {
-  //     setUser(JSON.parse(userData)); // Преобразуем строку обратно в объект
-  //     setIsAuthenticated(true); // Устанавливаем флаг аутентификации в true
-  //   } else {
-  //     setIsAuthenticated(false); // Если данных нет, считаем, что пользователь не авторизован
-  //   }
-  // }, []);
+
   // ------------------------------------
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
-    dispatch(setUser(null, null)); // Очищаем данные пользователя в Redux
+    dispatch(setUser(null, null));
+    dispatch(clearCart());
   };
   // ------------------------------------
+
+  useEffect(() => {
+    if (user && user.name === "admin") {
+      setIsAdmin(true);
+    } else {
+      setIsAdmin(false);
+    }
+  }, [user]);
+  // ------------------------------------
+
+  useEffect(() => {
+    const path = location.pathname.split("/")[1] || "home";
+    setActPoint(path);
+  }, [location]);
   const handlerActPoint = (arg) => {
     setActPoint(arg);
   };
@@ -53,13 +61,12 @@ const Header = () => {
           component={Link}
           to="/"
           onClick={(e) => {
-            handlerActPoint("Home");
+            handlerActPoint("home");
           }}
-          style={{ color: actPoint === "Home" ? "red" : "" }}
+          style={{ color: actPoint === "home" ? "red" : "" }}
         >
           Home
         </Button>
-
         {!isAuthenticated ? (
           <>
             <Button
@@ -67,9 +74,9 @@ const Header = () => {
               component={Link}
               to="/login"
               onClick={(e) => {
-                handlerActPoint("Login");
+                handlerActPoint("login");
               }}
-              style={{ color: actPoint === "Login" ? "red" : "" }}
+              style={{ color: actPoint === "login" ? "red" : "" }}
             >
               Login
             </Button>
@@ -78,9 +85,9 @@ const Header = () => {
               component={Link}
               to="/register"
               onClick={(e) => {
-                handlerActPoint("Register");
+                handlerActPoint("register");
               }}
-              style={{ color: actPoint === "Register" ? "red" : "" }}
+              style={{ color: actPoint === "register" ? "red" : "" }}
             >
               Register
             </Button>
@@ -93,11 +100,11 @@ const Header = () => {
                 component={Link}
                 to="/profile"
                 onClick={(e) => {
-                  handlerActPoint("Profile");
+                  handlerActPoint("profile");
                 }}
-                style={{ color: actPoint === "Profile" ? "red" : "" }}
+                style={{ color: actPoint === "profile" ? "red" : "" }}
               >
-                Hello, <h3>{user ? user.name : "User"}</h3>, see Profile
+                Hello, <h3>{user ? user.name : "user"}</h3>, see Profile
               </Button>
               <Button color="inherit" onClick={handleLogout}>
                 Logout
@@ -105,32 +112,33 @@ const Header = () => {
             </div>
           </>
         )}
-
         <Box
           className="cart-icon"
           component={Link}
           to="/cart"
           onClick={(e) => {
-            handlerActPoint("Card");
+            handlerActPoint("card");
           }}
-          style={{ color: actPoint === "Card" ? "red" : "" }}
+          style={{ color: actPoint === "card" ? "red" : "" }}
         >
           <div>
             <ShoppingCartIcon />
           </div>
           <span className="cart-badge">{numberProducts}</span>
         </Box>
-        <Button
-          color="inherit"
-          component={Link}
-          to="/admin"
-          onClick={(e) => {
-            handlerActPoint("admin");
-          }}
-          style={{ color: actPoint === "admin" ? "red" : "" }}
-        >
-          admin
-        </Button>
+        {isAdmin && (
+          <Button
+            color="inherit"
+            component={Link}
+            to="/admin"
+            onClick={(e) => {
+              handlerActPoint("admin");
+            }}
+            style={{ color: actPoint === "admin" ? "red" : "" }}
+          >
+            admin
+          </Button>
+        )}
       </Toolbar>
     </AppBar>
   );
