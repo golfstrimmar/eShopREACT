@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema({
     required: true, // Пароль обязателен
     minlength: [6, "Password must be at least 6 characters"], // Минимальная длина пароля
   },
+  picture: {
+    type: String, // URL изображения пользователя
+    default: "", // По умолчанию пустое поле
+  },
   role: {
     type: String,
     enum: ["user", "admin"], // Роль может быть только "user" или "admin"

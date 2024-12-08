@@ -59,28 +59,15 @@ export const deliteProduct = async (req, res) => {
 };
 // ----------------------------------------
 export const getProducts = async (req, res) => {
-  const { minPrice, maxPrice, categories } = req.query;
-
   try {
-    const filter = {};
-
-    if (minPrice && !isNaN(minPrice)) {
-      filter.price = { $gte: Number(minPrice) };
-    }
-    if (maxPrice && !isNaN(maxPrice)) {
-      if (!filter.price) {
-        filter.price = {};
-      }
-      filter.price.$lte = Number(maxPrice);
-    }
-    if (categories && categories.length > 0) {
-      filter.category = { $in: categories };
-    }
+    const { name } = req.query;
+    const filter = name ? { name: { $regex: name, $options: "i" } } : {};
     const products = await Product.find(filter).populate({
       path: "category",
       select: "name",
       options: { strictPopulate: false },
     });
+
     console.log("Products fetched:", products);
     res.status(200).json(products);
   } catch (error) {
@@ -88,6 +75,7 @@ export const getProducts = async (req, res) => {
     res.status(500).json({ message: "Error fetching products", error });
   }
 };
+
 // ------------------------
 export const updateProductCategory = async (req, res) => {
   const { productId } = req.params;
@@ -113,7 +101,7 @@ export const updateProductCategory = async (req, res) => {
 
     // Возвращаем обновленный продукт с популированной категорией
     const populatedProduct = await Product.findById(product._id).populate(
-      "category"
+      "category",
     );
     res.status(200).json(populatedProduct);
   } catch (error) {

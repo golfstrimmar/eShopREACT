@@ -7,11 +7,39 @@ import productRoutes from "./routes/productRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
+import { getImageFromCache } from "./controllers/imageController.js";
+import path from "path";
+import { fileURLToPath } from "url";
+import fs from "fs";
 // --------------------------------------------------
 const upload = multer();
 dotenv.config();
 connectDB();
 const app = express();
+
+// ========================================
+// Получаем путь к текущей директории с помощью import.meta.url
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Папка, где будут храниться кэшированные изображения
+const imageCachePath = path.join(__dirname, "imageCache");
+
+// Создаем директорию для кэшированных изображений, если она не существует
+fs.mkdirSync(imageCachePath, { recursive: true });
+
+// Настройка статического сервера для изображений
+// Это будет отдавать файлы из папки imageCache
+app.use("/images", express.static(imageCachePath));
+// ========================================
+
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 console.log(process.env.PORT);
 console.log(process.env.MONGO_URI);
@@ -50,6 +78,9 @@ app.use("/auth", upload.none(), authRoutes);
 // ====================================
 app.use("/orders", upload.none(), orderRoutes);
 // ====================================
+app.get("/api/getImage", getImageFromCache);
+// ====================================
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

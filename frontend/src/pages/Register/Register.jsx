@@ -60,7 +60,7 @@ const Register = () => {
   };
 
   return (
-    <Container maxWidth="xs">
+    <Container maxWidth="xs" className="pageContent">
       <Box
         sx={{
           display: "flex",
@@ -71,7 +71,7 @@ const Register = () => {
         }}
       >
         <Typography variant="h5" gutterBottom>
-          Register
+          Registration
         </Typography>
         <form onSubmit={handleSubmit} style={{ width: "100%" }}>
           <div>

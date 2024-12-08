@@ -22,7 +22,7 @@ const useProducts = () => {
             dispatch(setProducts(productsWithCategoryNames));
           });
       } catch (error) {
-        console.error("Ошибка при получении товаров:", error);
+        console.error("error:", error);
       }
     };
 

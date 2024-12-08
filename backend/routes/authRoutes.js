@@ -4,6 +4,7 @@ import {
   registerUser,
   loginUser,
   getUserProfile,
+  googleLogin,
 } from "../controllers/authController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
@@ -31,6 +32,12 @@ router.post(
   ],
   loginUser
 );
+
+// Получение данных профиля пользователя (защищенный маршрут)
+router.get("/profile", protect, getUserProfile);
+
+// Логин через Google
+router.post("/google", googleLogin); // добавляем новый маршрут
 
 // Получение данных профиля пользователя (защищенный маршрут)
 router.get("/profile", protect, getUserProfile);

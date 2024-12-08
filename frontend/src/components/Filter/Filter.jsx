@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Slider,
   TextField,
@@ -7,19 +7,14 @@ import {
   FormControlLabel,
   Checkbox,
 } from "@mui/material";
-import axios from "axios";
-import { useDispatch } from "react-redux";
-import { setProducts } from "../../redux/actions/productsActions";
+import { useDispatch, useSelector } from "react-redux";
 import useCategories from "../../hooks/useCategories";
-// --------------------
 
-// --------------------
-const Filter = () => {
+const Filter = ({ handleFilteredProducts }) => {
   const [priceRange, setPriceRange] = useState([0, 1000]);
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const dispatch = useDispatch();
   const categories = useCategories();
-  // --------------------
+  const products = useSelector((state) => state.products);
 
   // --------------------
   const handlePriceChange = (event, position) => {
@@ -33,13 +28,12 @@ const Filter = () => {
       setPriceRange([priceRange[0], value]);
     }
   };
+
   useEffect(() => {
     if (priceRange[0] > priceRange[1]) {
       setPriceRange([priceRange[1], priceRange[0]]);
     }
   }, [priceRange]);
-
-  // --------------------
 
   // --------------------
   const handleCategoryChange = (categoryId) => {
@@ -51,30 +45,28 @@ const Filter = () => {
       }
     });
   };
-  // --------------------
 
   // --------------------
   const applyFilters = () => {
-    const filters = {
-      minPrice: priceRange[0],
-      maxPrice: priceRange[1],
-      categories: selectedCategories,
-    };
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/products`, { params: filters })
-      .then((response) => {
-        const productsWithCategoryNames = response.data.map((product) => ({
-          ...product,
-          categoryName: product.category
-            ? product.category.name
-            : "No Category",
-        }));
-        dispatch(setProducts(productsWithCategoryNames));
-      })
-      .catch((error) => {
-        console.error("Error fetching products with filters:", error);
-      });
+    let filtered = [...products];
+
+    // -----------------Фильтрация по цене
+    filtered = filtered.filter(
+      (product) =>
+        product.price >= priceRange[0] && product.price <= priceRange[1]
+    );
+
+    //--------------- Фильтрация по категориям
+    if (selectedCategories.length > 0) {
+      filtered = filtered.filter((product) =>
+        selectedCategories.includes(product.category._id)
+      );
+    }
+
+    // ------------------Передаем отфильтрованные продукты в родительский компонент
+    handleFilteredProducts(filtered);
   };
+
   return (
     <div className="filterContainer">
       <Typography gutterBottom>Price Range</Typography>
@@ -111,7 +103,7 @@ const Filter = () => {
           inputProps={{ min: 0 }}
         />
       </div>
-      <div>
+      <div style={{ marginTop: "20px" }}>
         <Typography gutterBottom>Categories</Typography>
         <div>
           {categories.map((category) => (

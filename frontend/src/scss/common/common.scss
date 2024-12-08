@@ -16,9 +16,12 @@ body {
 }
 
 #root {
-  padding: 60px 20px;
+  // padding: 60px 20px;
   margin: auto;
   max-width: 1700px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 a {
@@ -74,5 +77,19 @@ h1 {
 //============================================
 
 .pageContent {
-  margin: 30px 0;
+  margin: 90px 20px;
+}
+.icons-block {
+  margin: auto 0 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+@media (max-width: 920px) {
+  .pageContent {
+    margin: 90px 20px;
+    h4{
+      text-align: center;
+    }
+  }
 }

@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Container, Box, Typography, Button, Paper } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 // -------------------------------------
 const Checkout = () => {
   const cartItems = useSelector((state) => state.cart);
   const user = useSelector((state) => state.auth.user);
-  const token = useSelector((state) => state.auth.token);
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({});
   const totalPrice = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -68,58 +65,64 @@ const Checkout = () => {
   };
 
   return (
-    <Container maxWidth="sm">
-      {user ? (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            mt: 4,
-            mb: 4,
-          }}
-        >
-          <Paper sx={{ padding: 3, width: "100%" }}>
-            <Typography variant="h4" gutterBottom>
-              Making an order
-            </Typography>
-            <Typography variant="h6">Name: {user.name}</Typography>
-            <Typography variant="h6">Email: {user.email}</Typography>
+    <div className="pageContent">
+      <Container maxWidth="sm">
+        {user ? (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              mt: 4,
+              mb: 4,
+            }}
+          >
+            <Paper sx={{ padding: 3, width: "100%" }}>
+              <Typography variant="h4" gutterBottom>
+                Making an order
+              </Typography>
+              <Typography variant="h6">Name: {user.name}</Typography>
+              <Typography variant="h6">Email: {user.email}</Typography>
 
-            <Typography variant="h5" sx={{ mt: 4 }}>
-              Products in the order:
-            </Typography>
-            {cartItems.map((item) => (
-              <Box key={item._id} sx={{ marginBottom: 2 }}>
-                <Typography variant="h6">
-                  {item.name} x {item.quantity}
-                </Typography>
-                <Typography variant="body1">Price: {item.price} $.</Typography>
-              </Box>
-            ))}
+              <Typography variant="h5" sx={{ mt: 4 }}>
+                Products in the order:
+              </Typography>
+              {cartItems.map((item) => (
+                <Box key={item._id} sx={{ marginBottom: 2 }}>
+                  <Typography variant="h6">
+                    {item.name} x {item.quantity}
+                  </Typography>
+                  <Typography variant="body1">
+                    Price: {item.price} $.
+                  </Typography>
+                </Box>
+              ))}
 
-            <Typography variant="h6" sx={{ mt: 2 }}>
-              Total Price: {totalPrice} $.
+              <Typography variant="h6" sx={{ mt: 2 }}>
+                Total Price: {totalPrice} $.
+              </Typography>
+              {successMessage && (
+                <Typography color="success">{successMessage}</Typography>
+              )}
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleConfirmOrder}
+                sx={{ mt: 2 }}
+              >
+                Confirm the order
+              </Button>
+            </Paper>
+          </Box>
+        ) : (
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+            <Typography variant="h6">
+              Please log in to make an order.
             </Typography>
-            {successMessage && (
-              <Typography color="success">{successMessage}</Typography>
-            )}
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleConfirmOrder}
-              sx={{ mt: 2 }}
-            >
-              Confirm the order
-            </Button>
-          </Paper>
-        </Box>
-      ) : (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-          <Typography variant="h6">Please log in to make an order.</Typography>
-        </Box>
-      )}
-    </Container>
+          </Box>
+        )}
+      </Container>
+    </div>
   );
 };
 

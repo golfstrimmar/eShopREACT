@@ -28,9 +28,9 @@ const AdminPage = () => {
 
   // --------------------------
   return (
-    <div className="admin">
+    <div className="admin pageContent">
       <div anchor="left" className="adminMenu">
-        <Typography variant="h4" marginTop={2}>
+        <Typography variant="h3" marginTop={2}>
           Admin Panel
         </Typography>
         <List>

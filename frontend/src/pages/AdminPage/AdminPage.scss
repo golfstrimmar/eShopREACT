@@ -1,14 +1,11 @@
 .admin {
-  margin: 20px 0;
   display: grid;
   grid-template-columns: 240px 1fr;
   .content {
     background: rgba(0, 0, 0, 0.05);
     padding: 20px 30px;
   }
-  .Allproducts {
-    margin: 0 0 0 0;
-  }
+
   .adminMenu {
     li {
       &:hover {

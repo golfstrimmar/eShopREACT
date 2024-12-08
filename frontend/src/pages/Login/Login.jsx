@@ -1,11 +1,11 @@
-// src/components/Login.js
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../redux/actions/authActions";
-
+import "./Login.scss";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Typography, Container, Box } from "@mui/material";
+import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -66,8 +66,40 @@ const Login = () => {
     }
   };
 
+  // Обработчик входа через Google
+  const handleGoogleLoginSuccess = (response) => {
+    const { credential } = response;
+
+    axios
+      .post(`${process.env.REACT_APP_API_URL}/auth/google`, {
+        token: credential,
+      })
+      .then((res) => {
+        const { user, token } = res.data;
+
+        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("token", token);
+
+        dispatch(setUser(user, token));
+        setSuccessMessage("Google login successful");
+
+        setTimeout(() => {
+          navigate("/profile");
+        }, 2000);
+      })
+      .catch((error) => {
+        setErrorMessage("Google login failed");
+        console.error(error);
+      });
+  };
+  // Обработчик ошибки входа через Google
+  const handleGoogleLoginFailure = (error) => {
+    console.error("Google login failed", error);
+    setErrorMessage("Google login failed");
+  };
+
   return (
-    <Container maxWidth="xs">
+    <Container maxWidth="xs" className="loginPage pageContent">
       <Box
         sx={{
           display: "flex",
@@ -122,6 +154,16 @@ const Login = () => {
             Login
           </Button>
         </form>
+
+        {/* Добавление кнопки Google Login */}
+        <Box className="googleLoginButton">
+          <GoogleOAuthProvider clientId="97002789728-ve6bh2bdiuv6tdqpt9pm668jf1cu59e4.apps.googleusercontent.com">
+            <GoogleLogin
+              onSuccess={handleGoogleLoginSuccess}
+              onError={handleGoogleLoginFailure}
+            />
+          </GoogleOAuthProvider>
+        </Box>
       </Box>
     </Container>
   );

@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   Button,
   List,
-  ListItem,
+  Card,
   Divider,
   Typography,
   CardMedia,
@@ -57,13 +57,13 @@ const Cart = () => {
   };
   return (
     <div className="pageContent">
-      <Typography variant="h4" gutterBottom>
-        Корзина
+      <Typography variant="h3" gutterBottom>
+        Cart
       </Typography>
-      <List>
+      <List className="productList">
         {cartItems.length > 0 ? (
           cartItems.map((item) => (
-            <ListItem key={item._id} className="productItem">
+            <Card key={item._id} className="productItem">
               <CardMedia
                 component="img"
                 image={item.image}
@@ -100,17 +100,17 @@ const Cart = () => {
                   Delite product from the cart
                 </Button>
               </Box>
-            </ListItem>
+            </Card>
           ))
         ) : (
-          <Typography variant="body1">Корзина пуста</Typography>
+          <Typography variant="body1">The kart is empty.</Typography>
         )}
       </List>
       <Divider />
       {cartItems.length > 0 && (
         <>
           <Typography variant="h6" style={{ marginTop: 10 }}>
-            Общая сумма: {totalPrice} руб.
+            Total price: {totalPrice} $.
           </Typography>
           <Button
             variant="contained"
@@ -118,7 +118,7 @@ const Cart = () => {
             style={{ marginTop: "10px" }}
             onClick={handleCheckout}
           >
-            Оформить заказ
+            Place an order
           </Button>
           <Button
             variant="outlined"
@@ -126,7 +126,7 @@ const Cart = () => {
             onClick={handleClearCart}
             style={{ marginTop: "10px", marginLeft: "10px" }}
           >
-            Очистить корзину
+            Empty the kart
           </Button>
         </>
       )}

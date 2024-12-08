@@ -1,13 +1,15 @@
 import React from "react";
 import { Typography } from "@mui/material";
 import ProductList from "../components/ProductList/ProductList";
+import Popular from "../components/Popular/Popular";
 const Home = () => {
   return (
     <div className="pageContent">
-      <Typography variant="h4" gutterBottom>
-        Наши товары
+      <Typography variant="h3" gutterBottom>
+        Our products
       </Typography>
       <ProductList />
+      <Popular />
     </div>
   );
 };
