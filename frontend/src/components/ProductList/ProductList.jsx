@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Pagination } from "@mui/material";
+import { CircularProgress, Pagination, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 import useProducts from "../../hooks/useProducts";
 import "./ProductList.scss";
@@ -11,36 +11,50 @@ import ProductCard from "../ProductCard/ProductCard";
 const ProductList = ({ onEdit }) => {
   useProducts();
   let products = useSelector((state) => state.products);
-
-  // Пагинация
+  // --------------Пагинация
   const [currentPage, setCurrentPage] = useState(1);
-  const [productsPerPage] = useState(10);
-
-  // Состояние фильтрованных продуктов
-  const [filteredProducts, setFilteredProducts] = useState(products);
-
-  // Индексы для пагинации
+  const [productsPerPage, setProductsPerPage] = useState(10);
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = filteredProducts.slice(
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState("");
+  // -------------Состояние фильтрованных продуктов
+  const [filteredProducts, setFilteredProducts] = useState(products);
+  let currentProducts = filteredProducts.slice(
     indexOfFirstProduct,
     indexOfLastProduct
   );
-
-  // Обработчик изменения страницы пагинации
+  // -------------------------
+  useEffect(() => {
+    if (products.length > 0) {
+      setFilteredProducts(products);
+      const timer = setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [products]);
+  //----------- Обработчик изменения страницы пагинации
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
   //=========================================
   useEffect(() => {
-    if (filteredProducts.length === 0) {
-      setFilteredProducts([]);
-    } else if (filteredProducts.length > 0) {
-      setFilteredProducts(filteredProducts);
-    } else {
+    setMessage("");
+    if (filteredProducts.length === products.length) {
       setFilteredProducts(products);
+    } else if (
+      filteredProducts.length !== products.length &&
+      filteredProducts.length > 0
+    ) {
+      setFilteredProducts(filteredProducts);
     }
+    setMessage("No products found");
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+    return () => clearTimeout(timer);
   }, [products, filteredProducts]);
 
   // ==============================================
@@ -64,22 +78,42 @@ const ProductList = ({ onEdit }) => {
         <Filter handleFilteredProducts={handleFilteredProducts} />
         {/* -------------------- */}
         <div className="Allproducts-container">
-          {currentProducts.map((product) => (
-            <ProductCard
-              key={product._id}
-              pro={{
-                id: product._id,
-                onEdit,
+          {loading ? (
+            <div
+              className="loading-container"
+              style={{
+                gridColumn: "span 2",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
               }}
-            />
-          ))}
-          <Pagination
-            count={Math.ceil(filteredProducts.length / productsPerPage)}
-            page={currentPage}
-            onChange={handlePageChange}
-            color="primary"
-            className="pagination"
-          />
+            >
+              <CircularProgress />
+            </div>
+          ) : currentProducts.length === 0 ? (
+            <Typography variant="h5" gutterBottom>
+              {message}
+            </Typography>
+          ) : (
+            <>
+              {currentProducts.map((product) => (
+                <ProductCard
+                  key={product._id}
+                  pro={{
+                    id: product._id,
+                    onEdit,
+                  }}
+                />
+              ))}
+              <Pagination
+                count={Math.ceil(filteredProducts.length / productsPerPage)}
+                page={currentPage}
+                onChange={handlePageChange}
+                color="primary"
+                className="pagination"
+              />
+            </>
+          )}
         </div>
       </div>
     </section>

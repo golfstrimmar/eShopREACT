@@ -7,6 +7,7 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Box,
   CircularProgress,
   Typography,
   Select,
@@ -14,6 +15,7 @@ import {
   Button,
 } from "@mui/material";
 import axios from "axios";
+import "./OrdersList.scss";
 // --------------------------------
 const OrdersList = () => {
   const [orders, setOrders] = useState([]);
@@ -108,43 +110,54 @@ const OrdersList = () => {
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
-          <TableRow>
+          <TableRow className="tableHead">
             <TableCell>Numer</TableCell>
             <TableCell>Customer Info</TableCell>
-            <TableCell>
-              <Button onClick={() => handleSortChange("status")}>
-                Status sorting
-              </Button>
-            </TableCell>
-            <TableCell>Change Status</TableCell>
             <TableCell>
               <Button onClick={() => handleSortChange("date")}>
                 Date sorting
               </Button>
             </TableCell>
             <TableCell>Total</TableCell>
+            <TableCell>
+              <Button onClick={() => handleSortChange("status")}>
+                Status sorting
+              </Button>
+            </TableCell>
+            <TableCell>Change Status</TableCell>
           </TableRow>
         </TableHead>
-        <TableBody>
+        <TableBody className="tableBody">
           {sortedOrders.map((order, index) => (
-            <TableRow key={index} sx={{ padding: 6, width: "100%" }}>
+            <TableRow
+              key={index}
+              sx={{
+                padding: 6,
+                width: "100%",
+              }}
+              className="tableRow"
+            >
               <TableCell>{index + 1}</TableCell>
               <TableCell>
                 <Typography component="p">{order.user.name}</Typography>
                 <Typography component="p">{order.user.email}</Typography>
               </TableCell>
-              <TableCell>{order.status}</TableCell>
-              <Select
-                value={order.status}
-                onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                sx={{ margin: 1 }}
-              >
-                <MenuItem value="pending">Pending</MenuItem>
-                <MenuItem value="shipped">Shipped</MenuItem>
-                <MenuItem value="delivered">Delivered</MenuItem>
-              </Select>
               <TableCell>{formatDate(order.createdAt)}</TableCell>
               <TableCell>{order.totalAmount}$</TableCell>
+              <TableCell>{order.status}</TableCell>
+              <Box style={{ margin: "auto" }}>
+                <Select
+                  value={order.status}
+                  onChange={(e) =>
+                    handleStatusChange(order._id, e.target.value)
+                  }
+                  sx={{ margin: 1 }}
+                >
+                  <MenuItem value="pending">Pending</MenuItem>
+                  <MenuItem value="shipped">Shipped</MenuItem>
+                  <MenuItem value="delivered">Delivered</MenuItem>
+                </Select>
+              </Box>
             </TableRow>
           ))}
         </TableBody>

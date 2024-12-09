@@ -3,21 +3,28 @@
 .popular {
   margin: 100px 0 0 0;
   position: relative;
-  max-height: 500px;
   padding: 0 0 0 0;
+
   .swiper {
-    max-height: 500px;
+    // max-height: 500px;
     position: relative;
-    max-width: 80%;
+    // overflow: visible;
   }
+
   .swiper-slide {
-    max-height: 480px;
+    // max-height: 500px;
+    padding: 15px 0;
   }
+
+  // .swiper-wrapper {
+  //   overflow: hidden;
+  // }
+
   button.swiper-button-prev,
   button.swiper-button-next {
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
+    top: auto;
+    bottom: -40px;
     width: 35px;
     height: 35px;
     display: flex;
@@ -25,6 +32,7 @@
     z-index: 10;
     min-width: 0 !important;
   }
+
   .swiper-button-prev:after,
   .swiper-button-next:after {
     font-size: 20px !important;
@@ -32,13 +40,16 @@
   }
 
   .swiper-button-next {
-    left: auto;
-    right: 0;
+    left: calc(50% + 40px);
+    transform: translateX(-50%);
   }
+
   .swiper-button-prev {
-    left: 0;
+    left: calc(50% - 40px);
+    transform: translateX(-50%);
   }
 }
+
 .popularcard {
   // display: flex;
   // flex-direction: column;
@@ -49,12 +60,15 @@
   margin: 6px 0;
   max-height: 500px;
   padding: 10px 15px;
+
   .cardContent {
     margin: 20px 0 0 0;
   }
+
   .productName {
     margin: 20px 0;
   }
+
   img {
     border-radius: 5px;
     aspect-ratio: 1.5/1;

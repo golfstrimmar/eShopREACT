@@ -15,6 +15,20 @@ body {
   font-size: 14px;
 }
 
+@media (max-width: 900px) {
+  body {
+    font-size: 12px;
+  }
+
+  h3 {
+    font-size: 2rem !important;
+  }
+
+  h5 {
+    font-size: 1.2rem !important;
+  }
+}
+
 #root {
   // padding: 60px 20px;
   margin: auto;
@@ -53,13 +67,6 @@ a {
   left: 0;
 }
 
-h1,
-h2,
-h4,
-h5,
-h6 {
-  font-family: "Bebas Neue", sans-serif;
-}
 
 h1 {
   line-height: 1.2 !important;
@@ -79,16 +86,19 @@ h1 {
 .pageContent {
   margin: 90px 20px;
 }
+
 .icons-block {
   margin: auto 0 0 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
+
 @media (max-width: 920px) {
   .pageContent {
     margin: 90px 20px;
-    h4{
+
+    h4 {
       text-align: center;
     }
   }

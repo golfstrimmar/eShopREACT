@@ -55,72 +55,17 @@ function Popular({
           prevEl: ".swiper-button-next",
         }}
         breakpoints={{
-          1024: {
+          1500: {
             slidesPerView: 3,
           },
-          767: {
+          970: {
             slidesPerView: 2,
-          },
-          480: {
-            slidesPerView: 1,
           },
         }}
       >
         {filteredProducts.map((product) => (
           <SwiperSlide key={product._id}>
             <ProductCard pro={{ id: product._id }} className="popularcard" />
-            {/* <Card className="popularcard">
-              <Link to={`/product/${product._id}`} className="cardLink">
-                <CardMedia
-                  component="img"
-                  image={product.image}
-                  alt={product.name}
-                />
-              </Link>
-              <CardContent className="cardContent">
-                <Link to={`/product/${product._id}`} className="productName">
-                  <Typography variant="h5">{product.name}</Typography>
-                </Link>
-                <Typography variant="body1">
-                  Price: {product.price} $
-                </Typography>
-                <RatingComponent product={product} products={products} />
-                {/* Category */}
-            {/* <Typography variant="body1">
-                  Category:
-                  <Typography
-                    variant="h6"
-                    component="span"
-                    style={{ marginLeft: "5px" }}
-                  >
-                    {product.category ? product.category.name : "No category"}
-                  </Typography>
-                </Typography> */}
-            {/* 
-                {!isCart && !isAdmin && (
-                  <div className="icons-block">
-                    <IconButton onClick={() => handleOpenModal(product._id)}>
-                      <VisibilityIcon />
-                    </IconButton>
-                    {!isCart && !isAdmin && <AddToCart product={product} />}
-                  </div>
-                )} */}
-            {/* {isAdmin && (
-                  <div className="icons-block">
-                    <IconButton onClick={() => onEdit(product)}>
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton
-                      color="secondary"
-                      aria-label="delete"
-                      onClick={() => handlerProductDelite(product)}
-                    >
-                      <DeleteForeverIcon className="deliteCard" />
-                    </IconButton>
-                  </div>
-                )} */}
-            {/* </CardContent> */}
-            {/* </Card> */}
           </SwiperSlide>
         ))}
       </Swiper>

@@ -1,6 +1,7 @@
 import React from "react";
 import { Dialog, DialogContent, Typography } from "@mui/material";
-const Modal = ({ open }) => {
+const ModalMessage = ({ open, message }) => {
+  console.log("message", message);
   return (
     <Dialog
       open={open}
@@ -11,12 +12,10 @@ const Modal = ({ open }) => {
       }}
     >
       <DialogContent>
-        <Typography component={"p"}>
-          The product has been successfully added to the shopping cart.
-        </Typography>
+        <Typography component={"p"}>{message}</Typography>
       </DialogContent>
     </Dialog>
   );
 };
 
-export default Modal;
+export default ModalMessage;

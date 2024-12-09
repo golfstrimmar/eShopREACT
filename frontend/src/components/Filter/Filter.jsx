@@ -82,6 +82,7 @@ const Filter = ({ handleFilteredProducts }) => {
         style={{
           display: "flex",
           justifyContent: "space-between",
+          marginTop: "20px",
         }}
       >
         <TextField
