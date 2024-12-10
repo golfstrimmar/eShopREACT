@@ -11,7 +11,7 @@ const ModalMessage = ({ open, message }) => {
       }}
     >
       <DialogContent>
-        <Typography component={"p"}>message{message}</Typography>
+        <Typography component={"p"}>{message}</Typography>
       </DialogContent>
     </Dialog>
   );
