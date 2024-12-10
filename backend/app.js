@@ -44,9 +44,17 @@ app.use(
 
 console.log(process.env.PORT);
 console.log(process.env.MONGO_URI);
+// app.use(
+//   cors({
+//     origin: "http://localhost:3000",
+//     methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
+//     allowedHeaders: ["Content-Type", "Authorization"],
+//   })
+// );
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    // origin: "http://localhost:3000",
+    origin: "https://e-shop-react-tau.vercel.app",
     methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
@@ -86,5 +94,6 @@ app.post("/contact", upload.none(), sendContactEmail);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  // console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on ${PORT}`);
 });
