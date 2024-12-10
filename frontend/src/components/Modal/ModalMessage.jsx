@@ -1,7 +1,6 @@
 import React from "react";
 import { Dialog, DialogContent, Typography } from "@mui/material";
 const ModalMessage = ({ open, message }) => {
-  console.log("ModalMessage--message--", message);
   return (
     <Dialog
       open={open}
