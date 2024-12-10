@@ -75,9 +75,9 @@ const Header = () => {
   }, [temp]);
   // =====================================
   useEffect(() => {
-    // if (user) {
-    //   setMenuAvatarOpen(false);
-    // }
+    if (user) {
+      setMenuAvatarOpen(false);
+    }
     if (user && user.name === "admin") {
       setIsAdmin(true);
     } else {
