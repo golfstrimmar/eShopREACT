@@ -451,8 +451,8 @@ const Header = () => {
                 <Menu
                   anchorEl={anchorAvatarEl}
                   id="account-menu"
-                  open={menuAvatarOpen}
-                  onClose={handleClose}
+                  // open={menuAvatarOpen}
+                  // onClose={handleClose}
                   anchorOrigin={{
                     vertical: "bottom",
                     horizontal: "right",
