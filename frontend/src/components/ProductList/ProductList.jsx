@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { CircularProgress, Pagination, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 import useProducts from "../../hooks/useProducts";
@@ -6,7 +6,6 @@ import "./ProductList.scss";
 import Filter from "../Filter/Filter";
 import SearchBar from "./../SearchBar/SearchBar";
 import ProductCard from "../ProductCard/ProductCard";
-
 // ==========================================
 const ProductList = ({ onEdit }) => {
   useProducts();
@@ -18,26 +17,28 @@ const ProductList = ({ onEdit }) => {
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
-  // -------------Состояние фильтрованных продуктов
   const [filteredProducts, setFilteredProducts] = useState(products);
-  let currentProducts = filteredProducts.slice(
-    indexOfFirstProduct,
-    indexOfLastProduct
-  );
+  const [searchQuery, setSearchQuery] = useState("");
+  // -------------------------------------------------
+  // ----------------------------------
+  const filteredAndPagedProducts = useMemo(() => {
+    const filtered = filteredProducts.filter((product) =>
+      product.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    return filtered.slice(indexOfFirstProduct, indexOfLastProduct);
+  }, [filteredProducts, searchQuery, indexOfFirstProduct, indexOfLastProduct]);
+
   // -------------------------
   useEffect(() => {
     if (products.length > 0) {
       setFilteredProducts(products);
       const timer = setTimeout(() => {
         setLoading(false);
-      }, 1000);
+      }, 300);
       return () => clearTimeout(timer);
     }
   }, [products]);
-  //----------- Обработчик изменения страницы пагинации
-  const handlePageChange = (event, value) => {
-    setCurrentPage(value);
-  };
 
   //=========================================
   useEffect(() => {
@@ -53,23 +54,27 @@ const ProductList = ({ onEdit }) => {
     setMessage("No products found");
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 1000);
+    }, 300);
     return () => clearTimeout(timer);
   }, [products, filteredProducts]);
 
-  // ==============================================
+  // -----------------------------------------------------
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
+
+  // Обработчик фильтрации продуктов
   const handleFilteredProducts = (filteredData) => {
-    console.log("filteredData", filteredData);
     setFilteredProducts(filteredData);
     setCurrentPage(1);
   };
 
-  const [searchQuery, setSearchQuery] = useState("");
-
   const handleSearch = (query) => {
     setSearchQuery(query);
   };
+  // -----------------------------------------------------
 
+  // -----------------------------------------------------
   return (
     <section>
       <SearchBar onSearch={handleSearch} />
@@ -90,13 +95,13 @@ const ProductList = ({ onEdit }) => {
             >
               <CircularProgress />
             </div>
-          ) : currentProducts.length === 0 ? (
+          ) : filteredAndPagedProducts.length === 0 && message !== "" ? (
             <Typography variant="h5" gutterBottom>
               {message}
             </Typography>
           ) : (
             <>
-              {currentProducts.map((product) => (
+              {filteredAndPagedProducts.map((product) => (
                 <ProductCard
                   key={product._id}
                   pro={{
@@ -105,6 +110,7 @@ const ProductList = ({ onEdit }) => {
                   }}
                 />
               ))}
+
               <Pagination
                 count={Math.ceil(filteredProducts.length / productsPerPage)}
                 page={currentPage}

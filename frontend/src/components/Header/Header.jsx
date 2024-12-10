@@ -3,7 +3,7 @@ import { ReactComponent as Rt } from "../../assets/react.svg";
 import { ReactComponent as No } from "../../assets/nodejs.svg";
 import { ReactComponent as Ex } from "../../assets/express.svg";
 import { ReactComponent as Md } from "../../assets/mongodb.svg";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import {
   AppBar,
   Toolbar,
@@ -19,18 +19,19 @@ import {
 } from "@mui/material";
 
 import MenuIcon from "@mui/icons-material/Menu";
-import { Link } from "react-router-dom";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import HomeIcon from "@mui/icons-material/Home";
+import StorefrontIcon from "@mui/icons-material/Storefront";
 import SecurityIcon from "@mui/icons-material/Security";
-import { useSelector, useDispatch } from "react-redux";
-import "./Header.scss";
-import { setUser } from "../../redux/actions/authActions";
-import { clearCart } from "../../redux/actions/cartActions";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Logout from "@mui/icons-material/Logout";
 import LoginIcon from "@mui/icons-material/Login";
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
+import { useSelector, useDispatch } from "react-redux";
+import { setUser } from "../../redux/actions/authActions";
+import { clearCart } from "../../redux/actions/cartActions";
+
+import "./Header.scss";
 // ============================================
 const Header = () => {
   const [anchorAvatarEl, setAnchorAvatarEl] = useState(null);
@@ -38,21 +39,18 @@ const Header = () => {
   const [menuAvatarOpen, setMenuAvatarOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrollY, setScrollY] = useState(0);
-  const [actPoint, setActPoint] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
   const [numberProducts, setNumberProducts] = useState(0);
   const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  // ============================
 
   // ============================
   const imageUrl = user?.picture
     ? `${process.env.REACT_APP_API_URL}${user.picture}` // Добавляем путь к серверу
     : null;
-  // =====================================
-  const handlerActPoint = (arg) => {
-    setActPoint(arg);
-  };
   // =====================================
   useEffect(() => {
     const handleScroll = () => {
@@ -61,6 +59,13 @@ const Header = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+  useEffect(() => {
+    const handleResize = () => {
+      setMenuAvatarOpen(false);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [menuAvatarOpen]);
 
   // =====================================
   let temp = useSelector((state) => state.cart);
@@ -70,9 +75,9 @@ const Header = () => {
   }, [temp]);
   // =====================================
   useEffect(() => {
-    if (user) {
-      setMenuAvatarOpen(false);
-    }
+    // if (user) {
+    //   setMenuAvatarOpen(false);
+    // }
     if (user && user.name === "admin") {
       setIsAdmin(true);
     } else {
@@ -112,6 +117,10 @@ const Header = () => {
   };
 
   // ==================================
+  const getActiveLinkStyle = (path) => {
+    return location.pathname === path ? { color: "red" } : { color: "" };
+  };
+  // ==================================
 
   return (
     <AppBar
@@ -127,9 +136,14 @@ const Header = () => {
       className="header"
     >
       <Container maxWidth="xl">
-        <Toolbar>
+        <Toolbar className="toolbar">
           {/* Логотип  */}
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} className="logo">
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ flexGrow: 1 }}
+            className="logo"
+          >
             <Link to="/">
               <Rt></Rt>
               <No></No>
@@ -137,7 +151,6 @@ const Header = () => {
               <Md></Md>
             </Link>
           </Typography>
-
           {/* Добавляем отображение имени пользователя рядом с иконкой меню на мобильных */}
           <Box sx={{ display: { xs: "flex", md: "none" }, alignItems: "left" }}>
             {user ? (
@@ -168,8 +181,8 @@ const Header = () => {
                 <Menu
                   anchorEl={anchorAvatarEl}
                   id="account-menu"
-                  open={menuAvatarOpen}
-                  onClose={handleClose}
+                  // open={menuAvatarOpen}
+                  // onClose={handleClose}
                   slotProps={{
                     paper: {
                       elevation: 0,
@@ -225,12 +238,8 @@ const Header = () => {
                       <MenuItem
                         component={Link}
                         to="/login"
-                        onClick={(e) => {
-                          handlerActPoint("login");
-                        }}
-                        style={{
-                          color: actPoint === "login" ? "red" : "inherit",
-                        }}
+                        onClick={handleCloseMenu}
+                        style={getActiveLinkStyle("/")}
                       >
                         <LoginIcon
                           style={{ marginRight: "8px", color: "inherit" }}
@@ -240,12 +249,8 @@ const Header = () => {
                       <MenuItem
                         component={Link}
                         to="/register"
-                        onClick={(e) => {
-                          handlerActPoint("register");
-                        }}
-                        style={{
-                          color: actPoint === "register" ? "red" : "inherit",
-                        }}
+                        onClick={handleCloseMenu}
+                        style={getActiveLinkStyle("/")}
                       >
                         <AppRegistrationIcon
                           style={{ marginRight: "8px", color: "inherit" }}
@@ -259,8 +264,7 @@ const Header = () => {
             ) : (
               <div></div>
             )}
-          </Box>
-
+          </Box>{" "}
           {/* Меню для мобильных */}
           {/* Меню для мобильных */}
           {/* Меню для мобильных */}
@@ -268,7 +272,6 @@ const Header = () => {
           {/* Меню для мобильных */}
           {/* Меню для мобильных */}
           {/* Меню для мобильных */}
-
           <Box sx={{ display: { xs: "flex", md: "none" } }}>
             <IconButton
               edge="end"
@@ -280,7 +283,6 @@ const Header = () => {
               <MenuIcon sx={{ marginLeft: "auto", cursor: "pointer" }} />
             </IconButton>
           </Box>
-
           <Menu
             anchorEl={anchormobEl}
             open={menuOpen}
@@ -297,42 +299,45 @@ const Header = () => {
             <MenuItem
               component={Link}
               to="/"
-              onClick={(e) => {
-                handlerActPoint("home");
-                handleCloseMenu();
-              }}
-              style={{ color: actPoint === "home" ? "red" : "inherit" }}
+              onClick={handleCloseMenu}
+              style={getActiveLinkStyle("/")}
             >
               <HomeIcon style={{ marginRight: "8px", color: "inherit" }} /> Home
             </MenuItem>
-
+            <MenuItem
+              component={Link}
+              to="/shop"
+              onClick={handleCloseMenu}
+              style={getActiveLinkStyle("/shop")}
+            >
+              <StorefrontIcon style={{ marginRight: "8px" }} /> Shop
+            </MenuItem>
+            <MenuItem
+              component={Link}
+              to="/contacts"
+              onClick={handleCloseMenu}
+              style={getActiveLinkStyle("/contacts")}
+            >
+              <HomeIcon style={{ marginRight: "8px" }} /> Contacts
+            </MenuItem>
             {isAdmin && (
               <MenuItem
-                color="inherit"
                 component={Link}
                 to="/admin"
-                onClick={(e) => {
-                  handlerActPoint("admin");
-                }}
-                style={{ color: actPoint === "admin" ? "red" : "inherit" }}
+                onClick={handleCloseMenu}
+                style={getActiveLinkStyle("/admin")}
               >
-                <SecurityIcon sx={{ mr: 1 }} /> Admin
+                <SecurityIcon style={{ marginRight: "8px" }} /> Admin
               </MenuItem>
             )}
             <Box
               className="cart-icon"
               component={Link}
               to="/cart"
-              onClick={(e) => {
-                handlerActPoint("card");
-              }}
-              style={{
-                color: actPoint === "card" ? "red" : "inherit",
-                position: "relative",
-                margin: "15px 0 15px 16px",
-              }}
+              onClick={handleCloseMenu}
+              style={getActiveLinkStyle("/cart")}
             >
-              <ShoppingCartIcon sx={{ mr: 1 }} />
+              <ShoppingCartIcon />
               <span className="cart-badge">{numberProducts}</span>
             </Box>
             {!user && (
@@ -340,31 +345,23 @@ const Header = () => {
                 <MenuItem
                   component={Link}
                   to="/login"
-                  onClick={(e) => {
-                    handlerActPoint("login");
-                  }}
-                  style={{ color: actPoint === "login" ? "red" : "inherit" }}
+                  onClick={handleCloseMenu}
+                  style={getActiveLinkStyle("/login")}
                 >
-                  <LoginIcon style={{ marginRight: "8px", color: "inherit" }} />
-                  Login
+                  <LoginIcon style={{ marginRight: "8px" }} /> Login
                 </MenuItem>
                 <MenuItem
                   component={Link}
                   to="/register"
-                  onClick={(e) => {
-                    handlerActPoint("register");
-                  }}
-                  style={{ color: actPoint === "register" ? "red" : "inherit" }}
+                  onClick={handleCloseMenu}
+                  style={getActiveLinkStyle("/register")}
                 >
-                  <AppRegistrationIcon
-                    style={{ marginRight: "8px", color: "inherit" }}
-                  />
+                  <AppRegistrationIcon style={{ marginRight: "8px" }} />{" "}
                   Registration
                 </MenuItem>
               </div>
             )}
           </Menu>
-
           {/* Меню для больших экранов */}
           {/* Меню для больших экранов */}
           {/* Меню для больших экранов */}
@@ -381,41 +378,53 @@ const Header = () => {
             <MenuItem
               component={Link}
               to="/"
-              onClick={(e) => {
-                handlerActPoint("home");
-              }}
-              style={{ color: actPoint === "home" ? "red" : "white" }}
+              onClick={handleCloseMenu}
+              style={getActiveLinkStyle("/")}
             >
               <HomeIcon sx={{ mr: 1 }} /> Home
             </MenuItem>
-
+            <MenuItem
+              component={Link}
+              to="/shop"
+              onClick={handleCloseMenu}
+              style={getActiveLinkStyle("/shop")}
+            >
+              <StorefrontIcon sx={{ mr: 1 }} /> Shop
+            </MenuItem>
+            <MenuItem
+              component={Link}
+              to="/contacts"
+              onClick={handleCloseMenu}
+              style={getActiveLinkStyle("/contacts")}
+            >
+              <HomeIcon sx={{ mr: 1 }} /> Contacts
+            </MenuItem>
             {!user ? (
               <>
                 <MenuItem
                   component={Link}
                   to="/login"
-                  onClick={(e) => {
-                    handlerActPoint("login");
-                  }}
-                  style={{ color: actPoint === "login" ? "red" : "white" }}
+                  onClick={handleCloseMenu}
+                  style={getActiveLinkStyle("/login")}
                 >
-                  <LoginIcon sx={{ mr: 1 }} />
-                  Login
+                  <LoginIcon sx={{ mr: 1 }} /> Login
                 </MenuItem>
                 <MenuItem
                   component={Link}
                   to="/register"
-                  onClick={(e) => {
-                    handlerActPoint("register");
-                  }}
-                  style={{ color: actPoint === "register" ? "red" : "white" }}
+                  onClick={handleCloseMenu}
+                  style={getActiveLinkStyle("/register")}
                 >
-                  <AppRegistrationIcon sx={{ mr: 1 }} />
-                  Registration
+                  <AppRegistrationIcon sx={{ mr: 1 }} /> Registration
                 </MenuItem>
               </>
             ) : (
-              <>
+              <Box
+                sx={{
+                  // display: { xs: "flex", md: "none", sm: "none" },
+                  alignItems: "left",
+                }}
+              >
                 <IconButton
                   onClick={handleOpenAvatar}
                   size="small"
@@ -444,36 +453,14 @@ const Header = () => {
                   id="account-menu"
                   open={menuAvatarOpen}
                   onClose={handleClose}
-                  slotProps={{
-                    paper: {
-                      elevation: 0,
-                      sx: {
-                        overflow: "visible",
-                        filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                        mt: 1.5,
-                        "& .MuiAvatar-root": {
-                          width: 32,
-                          height: 32,
-                          ml: -0.5,
-                          mr: 1,
-                        },
-                        "&::before": {
-                          content: '""',
-                          display: "block",
-                          position: "absolute",
-                          top: 0,
-                          right: 14,
-                          width: 10,
-                          height: 10,
-                          bgcolor: "background.paper",
-                          transform: "translateY(-50%) rotate(45deg)",
-                          zIndex: 0,
-                        },
-                      },
-                    },
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
                   }}
-                  transformOrigin={{ horizontal: "right", vertical: "top" }}
-                  anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
                 >
                   <MenuItem
                     color="inherit"
@@ -481,7 +468,13 @@ const Header = () => {
                     to="/profile"
                     onClose={handleClose}
                   >
-                    <Avatar />
+                    <Avatar
+                      style={{
+                        marginRight: "8px",
+                        width: "25px",
+                        height: "25px",
+                      }}
+                    />
                     See profile
                   </MenuItem>
                   <Divider />
@@ -492,20 +485,21 @@ const Header = () => {
                     Logout
                   </MenuItem>
                 </Menu>
-              </>
+              </Box>
             )}
-            <Box
-              className="cart-icon"
-              component={Link}
-              to="/cart"
-              onClick={(e) => {
-                handlerActPoint("card");
-              }}
-              style={{ color: actPoint === "card" ? "red" : "white" }}
-            >
-              <div>
-                <ShoppingCartIcon sx={{ mr: 1 }} />
-              </div>
+
+            {/* ----------------------- */}
+            <Box className="cart-icon" component={Link} to="/cart">
+              <ShoppingCartIcon
+                className="cart-icon"
+                sx={{
+                  mr: 1,
+                  color: location.pathname === "/cart" ? "red" : "white",
+                  "&:hover": {
+                    color: location.pathname !== "/cart" ? "#f0ab30" : "red",
+                  },
+                }}
+              />
               <span className="cart-badge">{numberProducts}</span>
             </Box>
             {isAdmin && (
@@ -513,10 +507,7 @@ const Header = () => {
                 color="inherit"
                 component={Link}
                 to="/admin"
-                onClick={(e) => {
-                  handlerActPoint("admin");
-                }}
-                style={{ color: actPoint === "admin" ? "red" : "white" }}
+                style={getActiveLinkStyle("/admin")}
               >
                 <SecurityIcon sx={{ mr: 1 }} /> Admin
               </MenuItem>

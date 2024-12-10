@@ -8,6 +8,7 @@ import categoryRoutes from "./routes/categoryRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import { getImageFromCache } from "./controllers/imageController.js";
+import { sendContactEmail } from "./controllers/contactController.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
@@ -79,6 +80,8 @@ app.use("/auth", upload.none(), authRoutes);
 app.use("/orders", upload.none(), orderRoutes);
 // ====================================
 app.get("/api/getImage", getImageFromCache);
+// ====================================
+app.post("/contact", upload.none(), sendContactEmail);
 // ====================================
 
 const PORT = process.env.PORT || 5000;

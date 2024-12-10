@@ -1,7 +1,7 @@
 import React from "react";
 import { Dialog, DialogContent, Typography } from "@mui/material";
 const ModalMessage = ({ open, message }) => {
-  console.log("message", message);
+  console.log("ModalMessage--message--", message);
   return (
     <Dialog
       open={open}
@@ -12,7 +12,7 @@ const ModalMessage = ({ open, message }) => {
       }}
     >
       <DialogContent>
-        <Typography component={"p"}>{message}</Typography>
+        <Typography component={"p"}>message{message}</Typography>
       </DialogContent>
     </Dialog>
   );

@@ -8,6 +8,8 @@ import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 import Profile from "../pages/Profile/Profile";
 import Checkout from "../pages/Checkout";
+import ContactForm from "../pages/Contacts/Contacts";
+import Shop from "../pages/Shop";
 
 const AppRouter = () => (
   <Routes>
@@ -15,10 +17,12 @@ const AppRouter = () => (
     <Route path="/product/:id" element={<ProductDetails />} />
     <Route path="/cart" element={<Cart />} />
     <Route path="/admin" element={<AdminPage />} />
+    <Route path="/shop" element={<Shop />} />
     <Route path="/login" element={<Login />} />
     <Route path="/register" element={<Register />} />
     <Route path="/profile" element={<Profile />} />
     <Route path="/checkout" element={<Checkout />} />
+    <Route path="/contacts" element={<ContactForm />} />
   </Routes>
 );
 

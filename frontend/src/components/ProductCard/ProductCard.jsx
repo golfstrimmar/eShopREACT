@@ -156,7 +156,9 @@ const ProductCard = ({ pro }) => {
               </div>
             )}
           </CardContent>
-          <ModalMessage open={openModalCart} message={message}></ModalMessage>
+          {message !== "" && (
+            <ModalMessage open={openModalCart} message={message}></ModalMessage>
+          )}
         </Card>
       )}
     </>
