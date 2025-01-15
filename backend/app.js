@@ -54,7 +54,8 @@ console.log(process.env.MONGO_URI);
 app.use(
   cors({
     // origin: "http://localhost:3000",
-    origin: "https://e-shop-react-tau.vercel.app",
+    // origin: "https://e-shop-react-tau.vercel.app",
+    origin: "*",
     methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
