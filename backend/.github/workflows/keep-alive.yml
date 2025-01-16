@@ -2,7 +2,7 @@ name: Keep Server Alive
 
 on:
   schedule:
-    - cron: "*/5 * * * *" # Запускать каждый 10 минут
+    - cron: "*/5 * * * *" # Запускать каждый 5 минут
   workflow_dispatch: # Позволяет вручную запускать этот workflow
 
 jobs:
