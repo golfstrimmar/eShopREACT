@@ -12,4 +12,4 @@ jobs:
     steps:
       - name: Pinging the server to keep it awake
         run: |
-          curl -X GET https://react2024-plc4.onrender.com
+          curl -X GET https://eshopreact.onrender.com
